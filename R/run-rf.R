@@ -56,7 +56,7 @@ execute.run.rf <- function(parameters){
     
   } else {
     
-    cl <- parallel::makeCluster(parameters$Config$Number.Cores == 0)
+    cl <- parallel::makeCluster(parameters$Config$Number.Cores)
     doParallel::registerDoParallel(cl)
     print(cl)
     
@@ -66,7 +66,7 @@ execute.run.rf <- function(parameters){
         cat("\n######################################################\n\n")
     } else {
       cat("\n\n#############################################################################")
-        cat("\n# Running in parallel with ", parameters$Config$Number.Cores == 0, " cores! #")
+        cat("\n# Running in parallel with ", parameters$Config$Number.Cores, " cores! #")
         cat("\n#############################################################################\n\n")
     }
   }

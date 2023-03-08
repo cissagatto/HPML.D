@@ -33,7 +33,6 @@ FolderRoot = "~/Standard-HPML"
 FolderScripts = "~/Standard-HPML/R"
 
 
-library("multiROC", quietly = TRUE)
 library("foreign", quietly = TRUE)
 library("AggregateR", quietly = TRUE)
 library("dplyr", quietly = TRUE)
@@ -45,6 +44,8 @@ library("rJava", quietly = TRUE)
 library("RWeka", quietly = TRUE)
 library("mldr", quietly = TRUE)
 library("utiml", quietly = TRUE)
+library("multiROC", quietly = TRUE)
+
 
 
 ##################################################################################################
