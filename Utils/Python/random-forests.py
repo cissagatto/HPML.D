@@ -31,6 +31,7 @@ import sys
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier  
+from sklearn.metrics import average_precision_score
 
 if __name__ == '__main__':   
     
@@ -41,9 +42,10 @@ if __name__ == '__main__':
     start = int(sys.argv[4])         # inicio do espaço de rótulos  
     directory = sys.argv[5]          # diretório para salvar as predições 
     
-    # train = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-6/Group-1/GpositiveGO-split-tr-6-group-1.csv")
-    # valid = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-6/Group-1/GpositiveGO-split-vl-6-group-1.csv")
-    # test = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-6/Group-1/GpositiveGO-split-ts-6-group-1.csv")
+    # train = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-1/Group-1/GpositiveGO-split-tr-1-group-1.csv")
+    # valid = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-1/Group-1/GpositiveGO-split-vl-1-group-1.csv")
+    # test = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-1/Group-1/GpositiveGO-split-ts-1-group-1.csv")
+    # directory = "/dev/shm/srfjws-GpositiveGO/Tested/Split-1/Group-1"
     
     # juntando treino com validação
     train = pd.concat([train,valid],axis=0).reset_index(drop=True)
@@ -142,5 +144,16 @@ if __name__ == '__main__':
       final.to_csv(probaname1, index=False)
       final2 = pd.concat(ldf2, axis=1)
       final2.to_csv(probaname2, index=False)
+      
+      y_true = pd.read_csv(true)
+      y_pred = pd.read_csv(pred)
+      
+      micro = average_precision_score(y_true, y_pred, average = "micro")
+      macro = average_precision_score(y_true, y_pred, average = "macro")
+      
+      y_proba = pd.DataFrame([micro,macro]).T
+      y_proba.columns = ["Micro-AUPRC", "Macro-AUPRC"]
+      name = (directory + "/y_proba_mami.csv") # salva as predições probabilísticas para 1
+      y_proba.to_csv(name, index=False)
       
       

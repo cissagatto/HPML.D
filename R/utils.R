@@ -867,9 +867,13 @@ roc.curve <- function(predictions, test, Folder){
              identity.col = "#a91e0e", col = "#1161d5"))
   dev.off()
   cat("\n")
-  
+
+    
   setwd(Folder)
   write.csv(as.numeric(res$roc$auc), "auc.csv")
+  write.csv(as.numeric(res$macro_auc), "macro-auc.csv")
+  write.csv(as.numeric(res$micro_auc), "micro-auc.csv")
+  
   
   
   ###############################################################
