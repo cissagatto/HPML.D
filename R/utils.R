@@ -850,103 +850,195 @@ properties.clusters <- function(nomes.labels.clusters,
 
 
 
-roc.curve <- function(predictions, test, Folder){
+
+roc.curva <- function(predictions, probabilities, test, Folder){
   
   #####################################################################
   y_pred2 = sapply(predictions, function(x) as.numeric(as.character(x)))
-  res = mldr_evaluate(test, y_pred2)
+  res.pred = mldr_evaluate(test, y_pred2)
   
+  #####################################################################
+  y_proba2 = sapply(probabilities, function(x) as.numeric(as.character(x)))
+  res.proba = mldr_evaluate(test, y_proba2)
   
   ###############################################################
   # PLOTANDO ROC CURVE
-  name = paste(Folder, "/plot-roc.pdf", sep="")
+  name = paste(Folder, "/roc-pred.pdf", sep="")
   pdf(name, width = 10, height = 8)
-  print(plot(res$roc, print.thres = 'all', print.auc=TRUE, 
+  print(plot(res.pred$roc, print.thres = 'all', print.auc=TRUE, 
              print.thres.cex=0.7, grid = TRUE, identity=TRUE,
              axes = TRUE, legacy.axes = TRUE, 
-             identity.col = "#a91e0e", col = "#1161d5"))
+             identity.col = "#a91e0e", col = "#1161d5",
+             main = "binary predictions"))
   dev.off()
   cat("\n")
-
-    
-  setwd(Folder)
-  write.csv(as.numeric(res$roc$auc), "auc.csv")
-  write.csv(as.numeric(res$macro_auc), "macro-auc.csv")
-  write.csv(as.numeric(res$micro_auc), "micro-auc.csv")
   
+  ###############################################################
+  # PLOTANDO ROC CURVE
+  name = paste(Folder, "/roc-proba.pdf", sep="")
+  pdf(name, width = 10, height = 8)
+  print(plot(res.proba$roc, print.thres = 'best', print.auc=TRUE, 
+             print.thres.cex=0.7, grid = TRUE, identity=TRUE,
+             axes = TRUE, legacy.axes = TRUE, 
+             identity.col = "#a91e0e", col = "#1161d5",
+             main = "probabilities predictions"))
+  dev.off()
+  cat("\n")
+  
+  
+  ###############################################################
+  setwd(Folder)
+  write.csv(as.numeric(res.pred$roc$auc), "pred-auc.csv")
+  write.csv(as.numeric(res.pred$macro_auc), "pred-macro-auc.csv")
+  write.csv(as.numeric(res.pred$micro_auc), "pred-micro-auc.csv")
+  
+  
+  ###############################################################
+  setwd(Folder)
+  write.csv(as.numeric(res.proba$roc$auc), "proba-auc.csv")
+  write.csv(as.numeric(res.proba$macro_auc), "proba-macro-auc.csv")
+  write.csv(as.numeric(res.proba$micro_auc), "proba-micro-auc.csv")
   
   
   ###############################################################
   # SALVANDO AS INFORMAÇÕES DO ROC SEPARADAMENTE
-  name = paste(Folder, "/roc-info-a.txt", sep="")
+  name = paste(Folder, "/roc-proba-1.txt", sep="")
   output.file <- file(name, "wb")
   
   write(" ", file = output.file, append = TRUE)
   write("percent: ", file = output.file, append = TRUE)
-  write(res$roc$percent, file = output.file, append = TRUE)
+  write(res.proba$roc$percent, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("sensitivities: ", file = output.file, append = TRUE)
-  write(res$roc$sensitivities, file = output.file, append = TRUE)
+  write(res.proba$roc$sensitivities, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("specificities: ", file = output.file, append = TRUE)
-  write(res$roc$specificities, file = output.file, append = TRUE)
+  write(res.proba$roc$specificities, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("thresholds: ", file = output.file, append = TRUE)
-  write(res$roc$thresholds, file = output.file, append = TRUE)
+  write(res.proba$roc$thresholds, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("direction: ", file = output.file, append = TRUE)
-  write(res$roc$direction, file = output.file, append = TRUE)
+  write(res.proba$roc$direction, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("cases: ", file = output.file, append = TRUE)
-  write(res$roc$cases, file = output.file, append = TRUE)
+  write(res.proba$roc$cases, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("controls: ", file = output.file, append = TRUE)
-  write(res$roc$controls, file = output.file, append = TRUE)
+  write(res.proba$roc$controls, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("auc: ", file = output.file, append = TRUE)
-  write(res$roc$auc, file = output.file, append = TRUE)
+  write(res.proba$roc$auc, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("original predictor: ", file = output.file, append = TRUE)
-  write(res$roc$original.predictor, file = output.file, append = TRUE)
+  write(res.proba$roc$original.predictor, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("original response: ", file = output.file, append = TRUE)
-  write(res$roc$original.response, file = output.file, append = TRUE)
+  write(res.proba$roc$original.response, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("predictor: ", file = output.file, append = TRUE)
-  write(res$roc$predictor, file = output.file, append = TRUE)
+  write(res.proba$roc$predictor, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("response: ", file = output.file, append = TRUE)
-  write(res$roc$response, file = output.file, append = TRUE)
+  write(res.proba$roc$response, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("levels: ", file = output.file, append = TRUE)
-  write(res$roc$levels, file = output.file, append = TRUE)
+  write(res.proba$roc$levels, file = output.file, append = TRUE)
+  
+  close(output.file)
+  
+  ###############################################################
+  # SALVANDO AS INFORMAÇÕES DO ROC SEPARADAMENTE
+  name = paste(Folder, "/roc-pred-1.txt", sep="")
+  output.file <- file(name, "wb")
+  
+  write(" ", file = output.file, append = TRUE)
+  write("percent: ", file = output.file, append = TRUE)
+  write(res.pred$roc$percent, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("sensitivities: ", file = output.file, append = TRUE)
+  write(res.pred$roc$sensitivities, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("specificities: ", file = output.file, append = TRUE)
+  write(res.pred$roc$specificities, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("thresholds: ", file = output.file, append = TRUE)
+  write(res.pred$roc$thresholds, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("direction: ", file = output.file, append = TRUE)
+  write(res.pred$roc$direction, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("cases: ", file = output.file, append = TRUE)
+  write(res.pred$roc$cases, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("controls: ", file = output.file, append = TRUE)
+  write(res.pred$roc$controls, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("auc: ", file = output.file, append = TRUE)
+  write(res.pred$roc$auc, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("original predictor: ", file = output.file, append = TRUE)
+  write(res.pred$roc$original.predictor, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("original response: ", file = output.file, append = TRUE)
+  write(res.pred$roc$original.response, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("predictor: ", file = output.file, append = TRUE)
+  write(res.pred$roc$predictor, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("response: ", file = output.file, append = TRUE)
+  write(res.pred$roc$response, file = output.file, append = TRUE)
+  
+  write(" ", file = output.file, append = TRUE)
+  write("levels: ", file = output.file, append = TRUE)
+  write(res.pred$roc$levels, file = output.file, append = TRUE)
   
   close(output.file)
   
   
   ###############################################################
   # SALVANDO AS OUTRAS INFORMAÇÕES
-  name = paste(Folder, "/roc-info-b.txt", sep="")
+  name = paste(Folder, "/roc-pred-2.txt", sep="")
   sink(name, type = "output")
-  print(res$roc)
+  print(res.pred$roc)
   cat("\n\n")
-  str(res)
+  str(res.pred)
   sink()
   
   
+  ###############################################################
+  # SALVANDO AS OUTRAS INFORMAÇÕES
+  name = paste(Folder, "/roc-proba-2.txt", sep="")
+  sink(name, type = "output")
+  print(res.proba$roc)
+  cat("\n\n")
+  str(res.proba)
+  sink()
 }
+
 
 predictions.information <- function(nomes.rotulos, 
                                     proba, 
@@ -1030,7 +1122,7 @@ predictions.information <- function(nomes.rotulos,
   names(FNi) = fni
   
   fpnt = data.frame(TPi, FPi, FNi, TNi)
-  name = paste(folder, "/fpnt.csv", sep="")
+  name = paste(folder, "/tfpn.csv", sep="")
   write.csv(fpnt, name, row.names = FALSE)
   
   # total de verdadeiros positivos
@@ -1056,10 +1148,19 @@ predictions.information <- function(nomes.rotulos,
   matriz_confusao_por_rotulos = data.frame(TPl, FPl, FNl, TNl)
   colnames(matriz_confusao_por_rotulos) = c("TP","FP", "FN", "TN")
   row.names(matriz_confusao_por_rotulos) = nomes.rotulos
-  name = paste(folder, "/mc.csv", sep="")
+  name = paste(folder, "/matrix-confusion-2.csv", sep="")
   write.csv(matriz_confusao_por_rotulos, name)
   
 }
+
+
+##################################################################################################
+# Please, any errors, contact us: elainececiliagatto@gmail.com                                   #
+# Thank you very much!                                                                           #
+##################################################################################################
+
+
+
 
 
 

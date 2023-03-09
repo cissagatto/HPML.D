@@ -287,6 +287,9 @@ if(parameters$Config$Implementation =="clus"){
   result_set <- t(data.matrix(timeFinal))
   setwd(parameters$Folders$folderTested)
   write.csv(result_set, "Final-Runtime.csv")
+  x.minutos = (1 * as.numeric(result_set[3]))/60
+  write(x.minutos, "minutos.txt")
+  
   
   print(system(paste("rm -r ", diretorios$folderDatasets, sep="")))
   print(system(paste("rm -r ", diretorios$folderPartitions, sep="")))

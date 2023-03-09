@@ -42,10 +42,10 @@ if __name__ == '__main__':
     start = int(sys.argv[4])         # inicio do espaço de rótulos  
     directory = sys.argv[5]          # diretório para salvar as predições 
     
-    # train = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-1/Group-1/GpositiveGO-split-tr-1-group-1.csv")
-    # valid = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-1/Group-1/GpositiveGO-split-vl-1-group-1.csv")
-    # test = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-1/Group-1/GpositiveGO-split-ts-1-group-1.csv")
-    # directory = "/dev/shm/srfjws-GpositiveGO/Tested/Split-1/Group-1"
+    #train = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-6/Group-1/GpositiveGO-split-tr-6-group-1.csv")
+    #valid = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-6/Group-1/GpositiveGO-split-vl-6-group-1.csv")
+    #test = pd.read_csv("/dev/shm/srfjws-GpositiveGO/Tested/Split-6/Group-1/GpositiveGO-split-ts-6-group-1.csv")
+    #directory = "/dev/shm/srfjws-GpositiveGO/Tested/Split-6/Group-1"
     
     # juntando treino com validação
     train = pd.concat([train,valid],axis=0).reset_index(drop=True)
@@ -77,23 +77,37 @@ if __name__ == '__main__':
     
     # adicionar um IF aqui 
     if num_col == 1:
+      
       y = np.squeeze(Y_train_labels)
       rf.fit(X_train_att, y)
+      
       y_pred_a = rf.predict(X_test_att)
       y_pred_d = pd.DataFrame(rf.predict(X_test_att))
       probabilities = rf.predict_proba(X_test_att) 
+      
       y_true_a = np.array(Y_test_labels)    
       y_true_d = pd.DataFrame(Y_test_labels)
       proba_d = pd.DataFrame(probabilities)
+      
       true = (directory + "/y_true.csv")
       pred = (directory + "/y_pred.csv")
       probaname1 = (directory + "/y_proba.csv")
       probaname2 = (directory + "/y_proba_1.csv")
+      
       y_pred_d.to_csv(pred, index=False)
       y_true_d.to_csv(true, index=False)
+      
       proba_d.to_csv(probaname1, index=False)
       proba_d = proba_d.iloc[:, 1:]
       proba_d.to_csv(probaname2, index=False)
+      
+      micro = average_precision_score(y_true_a, y_pred_a, average = "micro")
+      macro = average_precision_score(y_true_a, y_pred_a, average = "macro")
+      
+      y_proba = pd.DataFrame([micro,macro]).T
+      y_proba.columns = ["Micro-AUPRC", "Macro-AUPRC"]
+      name = (directory + "/y_proba_mami.csv") # salva as predições probabilísticas para 1
+      y_proba.to_csv(name, index=False)
     
     else:
       # treino
