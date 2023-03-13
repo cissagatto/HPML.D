@@ -145,6 +145,7 @@ while(p<=length(Implementation.1)){
           
           # folder.name = paste("/scratch/", name, sep = "")
           folder.name = paste("/dev/shm/", name, sep = "")
+          # folder.name = paste("/tmp/", name, sep = "")
           
           str1 = paste("Temporary_Path, ", folder.name, sep="")
           write(str1,file = output.file, append = TRUE)
