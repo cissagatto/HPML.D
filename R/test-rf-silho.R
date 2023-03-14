@@ -128,10 +128,6 @@ build.rf.silho <- function(parameters) {
       cat("\nSpecific Group")
       specificGroup = data.frame(filter(partition, group == g))
       
-      ########################################################################
-      fim = parameters$DatasetInfo$LabelStart + (nrow(specificGroup)-1)
-      labels.indices = seq(parameters$DatasetInfo$LabelStart, fim, by=1)
-      
       #########################################################################
       cat("\nTrain: Mount Group")
       train.attributes = train.dataset.original[, parameters$DatasetInfo$AttStart:parameters$DatasetInfo$AttEnd]
@@ -179,9 +175,10 @@ build.rf.silho <- function(parameters) {
       cat("\nJuntando treino com validação")
       tv.dataset.cluster = rbind(train.dataset.cluster, val.dataset.cluster)
       
-      #################################################
-      clusters.labels.names = colnames(tv.dataset.cluster)
-      nomes.labels.clusters = clusters.labels.names[labels.indices]
+      ########################################################################
+      fim = parameters$DatasetInfo$LabelStart + (nrow(specificGroup)-1)
+      labels.indices = seq(parameters$DatasetInfo$LabelStart, fim, by=1)
+      nomes.labels.clusters = specificGroup$label
       
       if(nrow(specificGroup)==1){
         
@@ -258,6 +255,24 @@ build.rf.silho <- function(parameters) {
                               preds = y_preds, 
                               trues = y_trues, 
                               folder = Folder.Tested.Group)
+      
+      
+      #####################################################################
+      cat("\nSave original and pruned predictions")
+      pred.o = paste(colnames(y_preds), "-pred", sep="")
+      names(y_preds) = pred.o
+      
+      true.labels = paste(colnames(y_trues), "-true", sep="")
+      names(y_trues) = true.labels
+      
+      proba = paste(colnames(y_probas), "-proba", sep="")
+      names(y_probas) = proba
+      
+      all.predictions = cbind(y_probas, y_preds, y_trues)
+      
+      setwd(FolderSplit)
+      write.csv(all.predictions, "clusters-predictions.csv", row.names = FALSE)
+      
       
       
       #####################################################################
@@ -418,6 +433,7 @@ gather.preds.rf.silho <- function(parameters) {
               test = test.mldr,
               Folder = Folder.Split.Test)
     
+    
     ##############################################
     predictions.information(nomes.rotulos = colnames(y_proba), 
                             proba = y_proba, 
@@ -443,6 +459,24 @@ gather.preds.rf.silho <- function(parameters) {
     if(res!=0){
       break
     }
+    
+    
+    #####################################################################
+    cat("\nSave original and pruned predictions")
+    pred.o = paste(colnames(y_preds), "-pred", sep="")
+    names(y_preds) = pred.o
+    
+    true.labels = paste(colnames(y_trues), "-true", sep="")
+    names(y_trues) = true.labels
+    
+    proba = paste(colnames(y_probas), "-proba", sep="")
+    names(y_probas) = proba
+    
+    all.predictions = cbind(y_probas, y_preds, y_trues)
+    
+    setwd(FolderSplit)
+    write.csv(all.predictions, "folder-predictions.csv", row.names = FALSE)
+    
     
     # f = f + 1
     gc()
@@ -534,8 +568,7 @@ evaluate.rf.silho <- function(parameters) {
                           wrong.perc, correct.perc)
     
     setwd(Folder.Tested.Split)
-    write.csv(conf.mat, "matrix-confusion.csv")
-    
+    write.csv(conf.mat, "matrix-confusion.csv")    
     
     
     # f = f + 1

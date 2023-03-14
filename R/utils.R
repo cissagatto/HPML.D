@@ -1158,16 +1158,3 @@ predictions.information <- function(nomes.rotulos,
 # Please, any errors, contact us: elainececiliagatto@gmail.com                                   #
 # Thank you very much!                                                                           #
 ##################################################################################################
-
-
-
-
-
-
-
-
-
-###########################################################################
-# Please, any errors, contact us: elainececiliagatto@gmail.com            #
-# Thank you very much!                                                    #
-###########################################################################
