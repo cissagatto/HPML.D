@@ -265,20 +265,14 @@ build.rf.silho <- function(parameters) {
       true.labels = paste(colnames(y_trues), "-true", sep="")
       names(y_trues) = true.labels
       
-      proba = paste(colnames(y_probas), "-proba", sep="")
-      names(y_probas) = proba
+      proba = paste(colnames(y_proba), "-proba", sep="")
+      names(y_proba) = proba
       
-      all.predictions = cbind(y_probas, y_preds, y_trues)
+      all.predictions = cbind(y_proba, y_preds, y_trues)
       
-      setwd(FolderSplit)
+      setwd(Folder.Tested.Group)
       write.csv(all.predictions, "clusters-predictions.csv", row.names = FALSE)
       
-      
-      
-      #####################################################################
-      unlink(test.name.csv)
-      unlink(train.name.csv)
-      unlink(val.name.csv)
       
       g = g + 1
       gc()
@@ -463,18 +457,18 @@ gather.preds.rf.silho <- function(parameters) {
     
     #####################################################################
     cat("\nSave original and pruned predictions")
-    pred.o = paste(colnames(y_preds), "-pred", sep="")
-    names(y_preds) = pred.o
+    pred.o = paste(colnames(y_pred), "-pred", sep="")
+    names(y_pred) = pred.o
     
-    true.labels = paste(colnames(y_trues), "-true", sep="")
-    names(y_trues) = true.labels
+    true.labels = paste(colnames(y_true), "-true", sep="")
+    names(y_true) = true.labels
     
-    proba = paste(colnames(y_probas), "-proba", sep="")
-    names(y_probas) = proba
+    proba = paste(colnames(y_proba), "-proba", sep="")
+    names(y_proba) = proba
     
-    all.predictions = cbind(y_probas, y_preds, y_trues)
+    all.predictions = cbind(y_proba, y_pred, y_true)
     
-    setwd(FolderSplit)
+    setwd(Folder.Split.Test)
     write.csv(all.predictions, "folder-predictions.csv", row.names = FALSE)
     
     
