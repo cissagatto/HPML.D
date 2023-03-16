@@ -536,6 +536,8 @@ evaluate.rf.silho <- function(parameters) {
     write.csv(confMatPart, namae)
     
     
+    
+    
     ###############################################################
     conf.mat = data.frame(confmat$TPl, confmat$FPl,
                           confmat$FNl, confmat$TNl)
@@ -562,7 +564,7 @@ evaluate.rf.silho <- function(parameters) {
                           wrong.perc, correct.perc)
     
     setwd(Folder.Tested.Split)
-    write.csv(conf.mat, "matrix-confusion.csv")    
+    write.csv(conf.mat, "utiml-matrix-confusion.csv")
     
     
     # f = f + 1
