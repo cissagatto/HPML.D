@@ -39,7 +39,7 @@ if __name__ == '__main__':
     valid = pd.read_csv(sys.argv[2]) # conjunto de validação
     test = pd.read_csv(sys.argv[3])  # conjunto de teste
     start = int(sys.argv[4])         # inicio do espaço de rótulos    
-    directory = sys.argv[6]          # diretório para salvar as predições 
+    directory = sys.argv[5]          # diretório para salvar as predições 
     
     #train = pd.read_csv("/home/biomal/Área de Trabalho/probabilidades-erro/train.csv")
     #valid = pd.read_csv("/home/biomal/Área de Trabalho/probabilidades-erro/valid.csv")

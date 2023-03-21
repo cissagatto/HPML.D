@@ -55,7 +55,7 @@ datasets <- data.frame(read.csv("datasets-original.csv"))
 cat("\n\nCreating a list of parameters")
 parameters = list()
 
-# config_file = "/home/biomal/Standard-HPML/config-files/rf/jaccard/ward.D2/silho/srfjws-GpositiveGO.csv"
+# config_file = "/home/biomal/Standard-HPML/config-files-0/rf/jaccard/ward.D2/silho/srfjws-medical.csv"
 
 cat("\n\nGetting arguments for commnad line")
 args <- commandArgs(TRUE)
