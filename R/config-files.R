@@ -53,33 +53,33 @@ n = nrow(datasets)
 ##################################################
 # WHICH IMPLEMENTATION WILL BE USED?
 ##################################################
-Implementation.1 = c("rf", "clus")
-Implementation.2 = c("rf", "c")
+Implementation.1 = c("rf")
+Implementation.2 = c("rf")
 
 
 ######################################################
 # SIMILARITY MEASURE USED TO MODEL LABEL CORRELATIONS
 ######################################################
-Similarity.1 = c("jaccard","rogers")
-Similarity.2 = c("j", "ro")
+Similarity.1 = c("jaccard")
+Similarity.2 = c("j")
 
 
 ##################################################
 # LINKAGE METRIC USED TO BUILT THE DENDROGRAM
 ##################################################
-Dendrogram.1 = c("ward.D2", "single")
-Dendrogram.2 = c("w", "s")
+Dendrogram.1 = c("ward.D2")
+Dendrogram.2 = c("w")
 
 
 ######################################################
 # CRITERIA USED TO CHOOSE THE BEST HYBRID PARTITION
 ######################################################
-Criteria.1 = c("silho","maf1", "mif1")
-Criteria.2 = c("s", "ma", "mi")
+Criteria.1 = c("silho")
+Criteria.2 = c("s")
 
 
 ######################################################
-FolderCF = paste(FolderRoot, "/config-files-2", sep="")
+FolderCF = paste(FolderRoot, "/config-files-ufscar", sep="")
 if(dir.exists(FolderCF)==FALSE){dir.create(FolderCF)}
 
 # IMPLEMENTAÇÃO
@@ -123,12 +123,7 @@ while(p<=length(Implementation.1)){
           cat("\n\t", Criteria.1[w])
           cat("\n\t", ds$Name)
           
-          name = paste("s", 
-                       Implementation.2[p], "", 
-                       Similarity.2[s], "", 
-                       Dendrogram.2[f], "", 
-                       Criteria.2[w], "-",
-                       ds$Name, sep="")  
+          name = paste("stand-", ds$Name, sep="")  
           
           file.name = paste(FolderCriteria, "/", name, ".csv", sep="")
           
@@ -137,11 +132,11 @@ while(p<=length(Implementation.1)){
           write("Config, Value",
                 file = output.file, append = TRUE)
           
-          # write("Dataset_Path, /Datasets", 
-          #    file = output.file, append = TRUE)
+           write("Dataset_Path, /Datasets", 
+              file = output.file, append = TRUE)
           
-           write("Dataset_Path, /home/elaine/Datasets", 
-                file = output.file, append = TRUE)
+          # write("Dataset_Path, /home/elaine/Datasets", 
+          #      file = output.file, append = TRUE)
           
           # write("Dataset_Path, /home/biomal/Datasets", 
           #      file = output.file, append = TRUE)
@@ -153,8 +148,7 @@ while(p<=length(Implementation.1)){
           str1 = paste("Temporary_Path, ", folder.name, sep="")
           write(str1,file = output.file, append = TRUE)
           
-          
-          str.1 = paste("/home/elaine/2-Best-Partitions/HPML.A/", 
+          str.1 = paste("/2-Best-Partitions/HPML.A/", 
                         Similarity.1[s], "/",
                         Dendrogram.1[f], "/", 
                         Criteria.1[w],

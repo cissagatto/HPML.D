@@ -211,7 +211,7 @@ build.rf.silho <- function(parameters) {
       cat("\nExecute ECC PYTHON")
       str.execute = paste("python3 ",
                           parameters$Folders$folderPython,
-                          "/random-forests.py ",
+                          "/random-forests-2.py ",
                           train.name.csv, " ",
                           val.name.csv,  " ",
                           test.name.csv, " ",
