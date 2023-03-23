@@ -117,7 +117,7 @@ if __name__ == '__main__':
           res.columns = [f'prob_{n}_0'] 
           res[f'prob_{n}_1'] = 0 
         else:
-          res.columns = [f'prob_e{n}_0', f'prob_e{n}_1']
+          res.columns = [f'prob_{n}_0', f'prob_{n}_1']
         
         ldf.append(res)
         res2 = res.iloc[:, :1] # atributos

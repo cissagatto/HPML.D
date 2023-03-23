@@ -863,7 +863,7 @@ roc.curva <- function(predictions, probabilities, test, Folder){
   
   ###############################################################
   # PLOTANDO ROC CURVE
-  name = paste(Folder, "/roc-pred.pdf", sep="")
+  name = paste(Folder, "/roc-bin.pdf", sep="")
   pdf(name, width = 10, height = 8)
   print(plot(res.pred$roc, print.thres = 'all', print.auc=TRUE, 
              print.thres.cex=0.7, grid = TRUE, identity=TRUE,
@@ -888,9 +888,9 @@ roc.curva <- function(predictions, probabilities, test, Folder){
   
   ###############################################################
   setwd(Folder)
-  write.csv(as.numeric(res.pred$roc$auc), "pred-auc.csv")
-  write.csv(as.numeric(res.pred$macro_auc), "pred-macro-auc.csv")
-  write.csv(as.numeric(res.pred$micro_auc), "pred-micro-auc.csv")
+  write.csv(as.numeric(res.pred$roc$auc), "bin-auc.csv")
+  write.csv(as.numeric(res.pred$macro_auc), "bin-macro-auc.csv")
+  write.csv(as.numeric(res.pred$micro_auc), "bin-micro-auc.csv")
   
   
   ###############################################################
@@ -961,7 +961,7 @@ roc.curva <- function(predictions, probabilities, test, Folder){
   
   ###############################################################
   # SALVANDO AS INFORMAÇÕES DO ROC SEPARADAMENTE
-  name = paste(Folder, "/roc-pred-1.txt", sep="")
+  name = paste(Folder, "/roc-bin-1.txt", sep="")
   output.file <- file(name, "wb")
   
   write(" ", file = output.file, append = TRUE)
@@ -1021,7 +1021,7 @@ roc.curva <- function(predictions, probabilities, test, Folder){
   
   ###############################################################
   # SALVANDO AS OUTRAS INFORMAÇÕES
-  name = paste(Folder, "/roc-pred-2.txt", sep="")
+  name = paste(Folder, "/roc-bin-2.txt", sep="")
   sink(name, type = "output")
   print(res.pred$roc)
   cat("\n\n")
