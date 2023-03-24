@@ -231,15 +231,22 @@ build.rf.silho <- function(parameters) {
       setwd(Folder.Tested.Group)
       y_preds = data.frame(read.csv("y_pred.csv"))
       y_trues = data.frame(read.csv("y_true.csv"))
-      y_proba = data.frame(read.csv("y_proba.csv"))
+      y_probas = data.frame(read.csv("y_proba.csv"))
       
       if(nrow(specificGroup)==1){
+        
+        y_proba_2 = data.frame(t(y_probas))
+        nomes.colunas = c("prob_0_0", "prob_0_1")
+        names(y_proba_2) = nomes.colunas
+        setwd(Folder.Tested.Group)
+        write.csv(y_proba_2, "y_proba_0_1.csv", row.names = FALSE)
+        
         cat("\n UM RÓTULO")
-        nomes = colnames(y_proba)
-        
-        linhas = ncol(y_proba)
+        nomes = colnames(y_probas)
+
+        linhas = ncol(y_probas)
         m = (linhas/2)+1
-        
+
         nomes.2 = c("")
         a = 0
         while(a<m){
@@ -247,24 +254,22 @@ build.rf.silho <- function(parameters) {
           a = a + 1
         }
         
-        probabilidades = select(y_proba, nomes.2)
-        probabilidades.2 = data.frame(t(probabilidades))
-        names(probabilidades.2) = c(nomes.labels.clusters,nomes.labels.clusters)
-        write.csv(probabilidades.2, "probabilidades.csv", row.names = FALSE)
-        
-        prob.1 = probabilidades.2[,2]
-        write.csv(prob.1, "y_proba.csv", row.names = FALSE)
+        nomes.linhas = row.names(y_proba_2)
+        y_proba_3 = cbind(nomes.linhas, y_proba_2)
+        y_proba_4 = y_proba_3[y_proba_3$nomes.linhas %in% nomes.2, ] 
+        y_proba_5 = y_proba_4[,3]
+        length(y_proba_5)
         
         
         #####################################################################
         cat("\n\tUTIML Threshold\n")
-        y_preds_2 <- data.frame(as.matrix(fixed_threshold(probabilidades.2, 
+        y_preds_2 <- data.frame(as.matrix(fixed_threshold(y_proba_4, 
                                                           threshold = 0.5)))
-        names(y_preds_2) = c(nomes.labels.clusters, nomes.labels.clusters)
+        names(y_preds_2) = nomes.colunas
         setwd(Folder.Tested.Group)
-        nomes.labels.clusters2 = nomes.labels.clusters
-        nomes.labels.clusters2 = y_preds_2[,2]
-        write.csv(nomes.labels.clusters2, "y_predict.csv", row.names = FALSE)
+        write.csv(y_preds_2, "y_predict_0_1.csv", row.names = FALSE)
+        y_pred = y_preds_2[,2]
+        length(y_pred)
         
         
         #####################################################################
@@ -273,7 +278,7 @@ build.rf.silho <- function(parameters) {
         true.o = paste(nomes.labels.clusters, "-true", sep="")
         proba.o = paste(nomes.labels.clusters, "-proba", sep="")
         
-        all.predictions = cbind(prob.1, nomes.labels.clusters2, y_trues)
+        all.predictions = cbind(y_proba_5, y_pred, y_trues)
         names(all.predictions) = c(proba.o, pred.o, true.o)
         
         setwd(Folder.Tested.Group)
@@ -283,19 +288,19 @@ build.rf.silho <- function(parameters) {
       } else {
         cat("\n MAIS DE RÓTULO")
         
-        nomes = colnames(y_proba)
-        
+        nomes = colnames(y_probas)
+
         nomes.2 = c("")
-        m = ncol(y_proba)/2
+        m = ncol(y_probas)/2
         a = 1
         while(a<=m){
           nomes.2[a] = paste("prob_", a-1, "_1", sep="")
           a = a + 1
         }
-        
-        probabilidades = select(y_proba, nomes.2)
-        names(probabilidades) = nomes.labels.clusters
-        write.csv(probabilidades, "y_proba.csv", row.names = FALSE)
+
+        probabilidades = y_probas %>% select(all_of(nomes.2))
+        names(probabilidades) = colnames(y_trues)
+        write.csv(probabilidades, "y_proba_1.csv", row.names = FALSE)
         
         #####################################################################
         cat("\n\tUTIML Threshold\n")
@@ -317,12 +322,13 @@ build.rf.silho <- function(parameters) {
         proba = paste(nomes.labels.clusters, "-proba", sep="")
         names(probabilidades) = proba
         
-        all.predictions = cbind(probabilidades, y_preds, y_trues)
+        all.predictions = cbind(probabilidades, y_preds_2, y_trues)
         
         setwd(Folder.Tested.Group)
         write.csv(all.predictions, "clusters-predictions.csv", row.names = FALSE)
         
       }
+      
       
       g = g + 1
       gc()
@@ -347,7 +353,7 @@ gather.preds.rf.silho <- function(parameters) {
   
   f = 1
   gatherR <- foreach(f = 1:parameters$Config$Number.Folds) %dopar% {
-  # while(f<=parameters$Config$Number.Folds){
+  #while(f<=parameters$Config$Number.Folds){
     
     cat("\nFold: ", f)
     
@@ -384,10 +390,8 @@ gather.preds.rf.silho <- function(parameters) {
     all.total.labels = data.frame(parameters$All.Partitions$all.total.labels)
     
     best.part.info.f = data.frame(filter(best.part.info, num.fold == f))
-    all.total.labels.f = data.frame(filter(all.total.labels, num.fold ==
-                                             f))
+    all.total.labels.f = data.frame(filter(all.total.labels, num.fold == f))
     partition = data.frame(filter(all.partitions.info, num.fold == f))
-    
     
     #########################################################################
     cat("\nCreating Folders from Best Partitions and Splits Tests")
@@ -423,7 +427,7 @@ gather.preds.rf.silho <- function(parameters) {
     g = 1
     while (g <= best.part.info.f $num.group) {
       
-      cat("\n\nGroup: ", g, "\n\n")
+      cat("\n\nGroup: ", g)
       
       Folder.Group.Test = paste(Folder.Split.Test, "/Group-", g, sep = "")
       
@@ -435,26 +439,20 @@ gather.preds.rf.silho <- function(parameters) {
       nomes.proba = c(paste(partition.g$label, ".proba", sep=""))
       nomes.pred = c(paste(partition.g$label, ".pred", sep=""))
       nomes.true = c(paste(partition.g$label, ".true", sep=""))
-     
       
-      if(names(predictions)[2]==nomes.pred[1]){
-        cat("\nexiste")
-        y_pred_2 = select(predictions, colnames(predictions)[2])
-      } else{
-        y_pred_2 = select(predictions, partition.g$label)
-      }
-      
-      y_proba_2 = select(predictions, nomes.proba)
-      y_true_2 = select(predictions, nomes.true)
+      y_pred_2 = predictions %>% select(all_of(nomes.pred))
+      y_proba_2 = predictions %>% select(all_of(nomes.proba))
+      y_true_2 = predictions %>% select(all_of(nomes.true))
       
       y_pred = cbind(y_pred, y_pred_2)
       y_proba = cbind(y_proba, y_proba_2)
       y_true = cbind(y_true, y_true_2)
       
       setwd(Folder.Group.Test)
-      cat("\nGather y_proba_mami ")
+      cat("\nGather y_proba_mami")
       y_proba_2 = data.frame(read.csv("y_proba_mami.csv"))
       y_proba_mami = rbind(y_proba_mami, y_proba_2)
+      
       
       g = g + 1
       gc()
@@ -533,7 +531,7 @@ gather.preds.rf.silho <- function(parameters) {
     write.csv(all.predictions, "folder-predictions.csv", row.names = FALSE)
     
     
-    # f = f + 1
+    f = f + 1
     gc()
   } # end do foreach
   
@@ -553,7 +551,7 @@ evaluate.rf.silho <- function(parameters) {
   
   f = 1
   avalParal <- foreach(f = 1:parameters$Config$Number.Folds) %dopar% {
-  # while(f<=parameters$Config$Number.Folds){
+    # while(f<=parameters$Config$Number.Folds){
     cat("\nFold: ", f)
     
     FolderRoot = "~/Standard-HPML"
@@ -726,7 +724,7 @@ gather.eval.rf.silho <- function(parameters) {
     pred.macro.auc = data.frame(read.csv("bin-macro-auc.csv"))
     names(pred.macro.auc) = c("fold", "value")
     final.pred.macro.auc = rbind(final.pred.macro.auc, pred.macro.auc)
-        
+    
     f = f + 1
     gc()
     
