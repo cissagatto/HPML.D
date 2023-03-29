@@ -184,7 +184,7 @@ while(p<=length(Implementation.1)){
           
           write("Number_Folds, 10", file = output.file, append = TRUE)
           
-          write("Number_Cores, 1", file = output.file, append = TRUE)
+          write("Number_Cores, 10", file = output.file, append = TRUE)
           
           close(output.file)
           
