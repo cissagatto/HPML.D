@@ -1,6 +1,5 @@
 ##############################################################################
-# HYBRID PARTITIONS FOR MULTI-LABEL CLASSIFICATION (HPML)                    #
-# RANDOM FORESTS IN PYTHON                                                   #
+# STANDARD HPML                                                              #
 # Copyright (C) 2023                                                         #
 #                                                                            #
 # This code is free software: you can redistribute it and/or modify it under #
@@ -11,36 +10,60 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General   #
 # Public License for more details.                                           #
 #                                                                            #
-# Elaine Cecilia Gatto | Prof. Dr. Ricardo Cerri | Prof. Dr. Mauri           #
-# Ferrandin | Prof. Dr. Celine Vens | PhD Felipe Nakano Kenji                #
+# 1 - PhD Elaine Cecilia Gatto | Prof PhD Ricardo Cerri                      #
+# 2 - Prof PhD Mauri Ferrandin                                               #
+# 3 - Prof PhD Celine Vens | PhD Felipe Nakano Kenji                         #
+# 4 - Prof PhD Jesse Read                                                    #
 #                                                                            #
-# Federal University of São Carlos - UFSCar - https://www2.ufscar.br         #
-# Campus São Carlos - Computer Department - DC - https://site.dc.ufscar.br   #
+# 1 = Federal University of São Carlos - UFSCar - https://www2.ufscar.br     #
+# Campus São Carlos | Computer Department - DC - https://site.dc.ufscar.br | #
 # Post Graduate Program in Computer Science - PPGCC                          # 
-# http://ppgcc.dc.ufscar.br - Bioinformatics and Machine Learning Group      #
-# BIOMAL - http://www.biomal.ufscar.br                                       #
+# http://ppgcc.dc.ufscar.br | Bioinformatics and Machine Learning Group      #
+# BIOMAL - http://www.biomal.ufscar.br                                       # 
 #                                                                            #
-# Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium               #
+# 2 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
+# https://ufsc.br/                                                           #
+#                                                                            #
+# 3 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium           #
 # Medicine Department - https://kulak.kuleuven.be/                           #
 # https://kulak.kuleuven.be/nl/over_kulak/faculteiten/geneeskunde            #
+#                                                                            #
+# 4 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
+# d’Estienne d’Orves - 91120 - Palaiseau - FRANCE                            #
 #                                                                            #
 ##############################################################################
 
 
-
-from sklearn.metrics import average_precision_score
 import sys
+from sklearn.metrics import average_precision_score
+import matplotlib.pyplot as plt
 import pandas as pd
 
 y_true = pd.read_csv(sys.argv[1])
-y_pred = pd.read_csv(sys.argv[2])
-directory = sys.argv[3]
+y_proba = pd.read_csv(sys.argv[2])
+y_pred_bin = pd.read_csv(sys.argv[3])
+name_proba = sys.argv[4]
+name_bin = sys.argv[5]
 
-micro = average_precision_score(y_true, y_pred, average = "micro")
-macro = average_precision_score(y_true, y_pred, average = "macro")
+# y_true = pd.read_csv("/dev/shm/grf-GpositiveGO/Global/Split-1/y_true.csv")
+# y_proba = pd.read_csv("/dev/shm/grf-GpositiveGO/Global/Split-1/y_proba_1.csv")
+# y_pred_bin = pd.read_csv("/dev/shm/grf-GpositiveGO/Global/Split-1/y_pred_bin.csv")
+# name_proba= "/dev/shm/grf-GpositiveGO/Global/Split-1/auprc_proba.csv"
+# name_bin = "/dev/shm/grf-GpositiveGO/Global/Split-1/auprc_bin.csv"
 
-y_proba = pd.DataFrame([micro,macro]).T
-y_proba.columns = ["Micro-AUPRC", "Macro-AUPRC"]
-name = (directory + "/y_proba_ma_mi.csv")
-y_proba.to_csv(name, index=False)
+# usando probabilidades
+micro_proba = average_precision_score(y_true, y_proba, average = "micro")
+macro_proba = average_precision_score(y_true, y_proba, average = "macro")
+
+# usando predições binárias
+# micro_bin = average_precision_score(y_true, y_pred_bin, average = "micro")
+# macro_bin = average_precision_score(y_true, y_pred_bin, average = "macro")
+
+res_proba = pd.DataFrame([micro_proba, macro_proba]).T
+res_proba .columns = ["Micro-AUPRC", "Macro-AUPRC"]
+res_proba.to_csv(name_proba, index=False)
+
+# res_bin = pd.DataFrame([micro_bin, macro_bin]).T
+# res_bin.columns = ["Micro-AUPRC", "Macro-AUPRC"]
+# res_bin.to_csv(name_bin, index=False)
 

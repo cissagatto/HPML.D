@@ -12,18 +12,26 @@ rm(list = ls())
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General   #
 # Public License for more details.                                           #
 #                                                                            #
-# PhD Elaine Cecilia Gatto | Prof. Dr. Ricardo Cerri | Prof. Dr. Mauri       #
-# Ferrandin | Prof. Dr. Celine Vens | PhD Felipe Nakano Kenji                #
+# 1 - PhD Elaine Cecilia Gatto | Prof PhD Ricardo Cerri                      #
+# 2 - Prof PhD Mauri Ferrandin                                               #
+# 3 - Prof PhD Celine Vens | PhD Felipe Nakano Kenji                         #
+# 4 - Prof PhD Jesse Read                                                    #
 #                                                                            #
-# Federal University of São Carlos - UFSCar - https://www2.ufscar.br         #
-# Campus São Carlos - Computer Department - DC - https://site.dc.ufscar.br   #
+# 1 = Federal University of São Carlos - UFSCar - https://www2.ufscar.br     #
+# Campus São Carlos | Computer Department - DC - https://site.dc.ufscar.br | #
 # Post Graduate Program in Computer Science - PPGCC                          # 
-# http://ppgcc.dc.ufscar.br - Bioinformatics and Machine Learning Group      #
-# BIOMAL - http://www.biomal.ufscar.br                                       #
+# http://ppgcc.dc.ufscar.br | Bioinformatics and Machine Learning Group      #
+# BIOMAL - http://www.biomal.ufscar.br                                       # 
 #                                                                            #
-# Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium               #
+# 2 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
+# https://ufsc.br/                                                           #
+#                                                                            #
+# 3 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium           #
 # Medicine Department - https://kulak.kuleuven.be/                           #
 # https://kulak.kuleuven.be/nl/over_kulak/faculteiten/geneeskunde            #
+#                                                                            #
+# 4 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
+# d’Estienne d’Orves - 91120 - Palaiseau - FRANCE                            #
 #                                                                            #
 ##############################################################################
 
@@ -79,7 +87,7 @@ Criteria.2 = c("s")
 
 
 ######################################################
-FolderCF = paste(FolderRoot, "/config-files-ufscar", sep="")
+FolderCF = paste(FolderRoot, "/config-files-apptainer", sep="")
 if(dir.exists(FolderCF)==FALSE){dir.create(FolderCF)}
 
 # IMPLEMENTAÇÃO
@@ -133,7 +141,7 @@ while(p<=length(Implementation.1)){
                 file = output.file, append = TRUE)
           
            write("Dataset_Path, /Datasets", 
-              file = output.file, append = TRUE)
+                file = output.file, append = TRUE)
           
           # write("Dataset_Path, /home/elaine/Datasets", 
           #      file = output.file, append = TRUE)
@@ -176,7 +184,7 @@ while(p<=length(Implementation.1)){
           
           write("Number_Folds, 10", file = output.file, append = TRUE)
           
-          write("Number_Cores, 10", file = output.file, append = TRUE)
+          write("Number_Cores, 1", file = output.file, append = TRUE)
           
           close(output.file)
           

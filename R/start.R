@@ -1,6 +1,10 @@
-cat("\n\n##############################################")
-  cat("\n# START TEST CHOSEN BEST HYBRID PARTITION    #")
-  cat("\n##############################################\n\n") 
+cat("\n\n##########################################################")
+cat("\n# RSCRIPT: START EXECUTE STANDARD HPML                     #")
+cat("\n###########################################################\n\n")
+
+
+# clean
+rm(list=ls())
 
 
 ##############################################################################
@@ -15,27 +19,40 @@ cat("\n\n##############################################")
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General   #
 # Public License for more details.                                           #
 #                                                                            #
-# PhD Elaine Cecilia Gatto | Prof. Dr. Ricardo Cerri | Prof. Dr. Mauri       #
-# Ferrandin | Prof. Dr. Celine Vens | PhD Felipe Nakano Kenji                #
+# 1 - PhD Elaine Cecilia Gatto | Prof PhD Ricardo Cerri                      #
+# 2 - Prof PhD Mauri Ferrandin                                               #
+# 3 - Prof PhD Celine Vens | PhD Felipe Nakano Kenji                         #
+# 4 - Prof PhD Jesse Read                                                    #
 #                                                                            #
-# Federal University of São Carlos - UFSCar - https://www2.ufscar.br         #
-# Campus São Carlos - Computer Department - DC - https://site.dc.ufscar.br   #
+# 1 = Federal University of São Carlos - UFSCar - https://www2.ufscar.br     #
+# Campus São Carlos | Computer Department - DC - https://site.dc.ufscar.br | #
 # Post Graduate Program in Computer Science - PPGCC                          # 
-# http://ppgcc.dc.ufscar.br - Bioinformatics and Machine Learning Group      #
-# BIOMAL - http://www.biomal.ufscar.br                                       #
+# http://ppgcc.dc.ufscar.br | Bioinformatics and Machine Learning Group      #
+# BIOMAL - http://www.biomal.ufscar.br                                       # 
 #                                                                            #
-# Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium               #
+# 2 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
+# https://ufsc.br/                                                           #
+#                                                                            #
+# 3 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium           #
 # Medicine Department - https://kulak.kuleuven.be/                           #
 # https://kulak.kuleuven.be/nl/over_kulak/faculteiten/geneeskunde            #
+#                                                                            #
+# 4 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
+# d’Estienne d’Orves - 91120 - Palaiseau - FRANCE                            #
 #                                                                            #
 ##############################################################################
 
 
-cat("\n\nSeting Workspace")
+cat("\n################################")
+cat("\n# Set Work Space               #")
+cat("\n###############################\n\n")
 FolderRoot = "~/Standard-HPML"
 FolderScripts = "~/Standard-HPML/R"
 
-cat("\n\nLoading source files")
+
+cat("\n########################################")
+cat("\n# Loading R Sources                    #")
+cat("\n########################################\n\n")
 
 setwd(FolderScripts)
 source("libraries.R")
@@ -43,30 +60,46 @@ source("libraries.R")
 setwd(FolderScripts)
 source("utils.R")
 
-cat("\n\nSeting R Options")
+
+cat("\n########################################")
+cat("\n# R Options Configuration              #")
+cat("\n########################################\n\n")
 options(java.parameters = "-Xmx64g")  # JAVA
 options(show.error.messages = TRUE)   # ERROR MESSAGES
 options(scipen=20)                    # number of places after the comma
 
-cat("\n\nOpening datasets original")
-setwd(FolderRoot)
-datasets <- data.frame(read.csv("datasets-original.csv"))
 
-cat("\n\nCreating a list of parameters")
+cat("\n########################################")
+cat("\n# Creating parameters list              #")
+cat("\n########################################\n\n")
 parameters = list()
 
-# config_file = "/home/biomal/Standard-HPML/config-files-0/rf/jaccard/ward.D2/silho/srfjws-medical.csv"
 
-cat("\n\nGetting arguments for commnad line")
+cat("\n########################################")
+cat("\n# Reading Datasets-Original.csv        #")
+cat("\n########################################\n\n")
+setwd(FolderRoot)
+datasets <- data.frame(read.csv("datasets-original.csv"))
+parameters$Datasets.List = datasets
+
+
+cat("\n#####################################")
+cat("\n# GET ARGUMENTS FROM COMMAND LINE   #")
+cat("\n#####################################\n\n")
 args <- commandArgs(TRUE)
+
+
+# config_file = "/home/biomal/Standard-HPML/config-files-laptop/rf/jaccard/ward.D2/silho/stand-GpositiveGO.csv"
+
 config_file <- args[1]
 
 
+parameters$Config.File.Name = config_file
 if(file.exists(config_file)==FALSE){
   cat("\n################################################################")
-   cat("\n Missing Config File! Verify the following path:              #")
-   cat("\n ", config_file, "                                            #")
-   cat("#################################################################\n\n")
+  cat("#\n Missing Config File! Verify the following path:              #")
+  cat("#\n ", config_file, "                                            #")
+  cat("#################################################################\n\n")
   break
 } else {
   cat("\n########################################")
@@ -126,10 +159,17 @@ ds = datasets[number_dataset,]
 parameters$DatasetInfo = ds
 
 
-cat("\n\nCreating directories")
+cat("\n########################################")
+cat("\n# Creating temporary processing folder #")
+cat("\n########################################\n\n")
 if (dir.exists(folderResults) == FALSE) {dir.create(folderResults)}
+
+
+cat("\n###############################\n")
+cat("\n# Get directories             #")
+cat("\n###############################\n\n")
 diretorios <- directories(parameters)
-parameters$Folders = diretorios
+parameters$Directories = diretorios
 
 
 cat("\n\nChecking the dataset tar.gz file")
@@ -152,7 +192,7 @@ if(file.exists(str00)==FALSE){
   cat("\n####################################################################\n\n")
   
   # COPIANDO
-  str01 = paste("cp ", str00, " ", parameters$Folders$folderDatasets, sep = "")
+  str01 = paste("cp ", str00, " ", parameters$Directories$folderDatasets, sep = "")
   res = system(str01)
   if (res != 0) {
     cat("\nError: ", str01)
@@ -160,8 +200,8 @@ if(file.exists(str00)==FALSE){
   }
   
   # DESCOMPACTANDO
-  str02 = paste("tar xzf ", parameters$Folders$folderDatasets, "/", ds$Name,
-                ".tar.gz -C ", parameters$Folders$folderDatasets, sep = "")
+  str02 = paste("tar xzf ", parameters$Directories$folderDatasets, "/", ds$Name,
+                ".tar.gz -C ", parameters$Directories$folderDatasets, sep = "")
   res = system(str02)
   if (res != 0) {
     cat("\nError: ", str02)
@@ -169,7 +209,7 @@ if(file.exists(str00)==FALSE){
   }
   
   #APAGANDO
-  str03 = paste("rm ", parameters$Folders$folderDatasets, "/", ds$Name,
+  str03 = paste("rm ", parameters$Directories$folderDatasets, "/", ds$Name,
                 ".tar.gz", sep = "")
   res = system(str03)
   if (res != 0) {
@@ -200,7 +240,7 @@ if(file.exists(str00)==FALSE){
   cat("\n####################################################################\n\n")
   
   # COPIANDO
-  str01 = paste("cp ", str00, " ", diretorios$folderPartitions, sep = "")
+  str01 = paste("cp ", str00, " ", parameters$Directories$folderPartitions, sep = "")
   res = system(str01)
   if (res != 0) {
     cat("\nError: ", str01)
@@ -208,8 +248,8 @@ if(file.exists(str00)==FALSE){
   }
   
   # DESCOMPACTANDO
-  str02 = paste("tar xzf ", diretorios$folderPartitions, "/", ds$Name,
-                ".tar.gz -C ", diretorios$folderPartitions, sep = "")
+  str02 = paste("tar xzf ", parameters$Directories$folderPartitions, "/", ds$Name,
+                ".tar.gz -C ", parameters$Directories$folderPartitions, sep = "")
   res = system(str02)
   if (res != 0) {
     cat("\nError: ", str02)
@@ -285,18 +325,19 @@ if(parameters$Config$Implementation =="clus"){
   
   timeFinal <- system.time(results <- execute.run.rf(parameters))
   result_set <- t(data.matrix(timeFinal))
-  setwd(parameters$Folders$folderTested)
+  setwd(parameters$Directories$folderTested)
   write.csv(result_set, "Final-Runtime.csv")
-  x.minutos = (1 * as.numeric(result_set[3]))/60
-  write(x.minutos, "minutos.txt")
+  
+  # x.minutos = (1 * as.numeric(result_set[3]))/60
+  # write(x.minutos, "minutos.txt")
   
   
-  print(system(paste("rm -r ", diretorios$folderDatasets, sep="")))
-  print(system(paste("rm -r ", diretorios$folderPartitions, sep="")))
+  print(system(paste("rm -r ", parameters$Directories$folderDatasets, sep="")))
+  print(system(paste("rm -r ", parameters$Directories$folderPartitions, sep="")))
   
   
   cat("\n\nCOPY TO GOOGLE DRIVE")
-  origem = parameters$Folders$folderTested
+  origem = parameters$Directories$folderTested
   destino = paste("nuvem:Standard-HPML/",
                   parameters$Config$Implementation, "/", 
                   parameters$Config$Similarity, "/", 

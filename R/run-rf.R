@@ -10,18 +10,26 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General   #
 # Public License for more details.                                           #
 #                                                                            #
-# PhD Elaine Cecilia Gatto | Prof. Dr. Ricardo Cerri | Prof. Dr. Mauri       #
-# Ferrandin | Prof. Dr. Celine Vens | PhD Felipe Nakano Kenji                #
+# 1 - PhD Elaine Cecilia Gatto | Prof PhD Ricardo Cerri                      #
+# 2 - Prof PhD Mauri Ferrandin                                               #
+# 3 - Prof PhD Celine Vens | PhD Felipe Nakano Kenji                         #
+# 4 - Prof PhD Jesse Read                                                    #
 #                                                                            #
-# Federal University of São Carlos - UFSCar - https://www2.ufscar.br         #
-# Campus São Carlos - Computer Department - DC - https://site.dc.ufscar.br   #
+# 1 = Federal University of São Carlos - UFSCar - https://www2.ufscar.br     #
+# Campus São Carlos | Computer Department - DC - https://site.dc.ufscar.br | #
 # Post Graduate Program in Computer Science - PPGCC                          # 
-# http://ppgcc.dc.ufscar.br - Bioinformatics and Machine Learning Group      #
-# BIOMAL - http://www.biomal.ufscar.br                                       #
+# http://ppgcc.dc.ufscar.br | Bioinformatics and Machine Learning Group      #
+# BIOMAL - http://www.biomal.ufscar.br                                       # 
 #                                                                            #
-# Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium               #
+# 2 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
+# https://ufsc.br/                                                           #
+#                                                                            #
+# 3 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium           #
 # Medicine Department - https://kulak.kuleuven.be/                           #
 # https://kulak.kuleuven.be/nl/over_kulak/faculteiten/geneeskunde            #
+#                                                                            #
+# 4 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
+# d’Estienne d’Orves - 91120 - Palaiseau - FRANCE                            #
 #                                                                            #
 ##############################################################################
 
@@ -60,7 +68,7 @@ execute.run.rf <- function(parameters){
     doParallel::registerDoParallel(cl)
     print(cl)
     
-    if(number_cores==1){
+    if(parameters$Config$Number.Cores==1){
       cat("\n\n######################################################")
         cat("\n# Running Sequentially!                              #")
         cat("\n######################################################\n\n")
@@ -75,7 +83,7 @@ execute.run.rf <- function(parameters){
   cat("\n\n#######################################################")
     cat("\n# RUN RF: Get labels                                  #")
     cat("\n#######################################################\n\n")
-  arquivo = paste(parameters$Folders$folderNamesLabels, "/" ,
+  arquivo = paste(parameters$Directories$folderNamesLabels, "/" ,
                   dataset_name, "-NamesLabels.csv", sep="")
   namesLabels = data.frame(read.csv(arquivo))
   colnames(namesLabels) = c("id", "labels")
@@ -98,75 +106,75 @@ execute.run.rf <- function(parameters){
   
   
   if(parameters$Config$Criteria=="maf1"){
-    
-    cat("\n\n######################################################")
-      cat("\n# RUN RF MACRO-F1: Build and Test Partitions         #")
-      cat("\n######################################################\n\n")
-    timeBuild = system.time(resBuild <- build.rf.maf1(parameters))
-    
-    
-    cat("\n\n#######################################################")
-      cat("\n# RUN RF MACRO-F1: Matrix Confusion                   #")
-      cat("\n#######################################################\n\n")
-    timePreds = system.time(resGather <- gather.preds.rf.maf1(parameters))
-    
-    
-    cat("\n\n########################################################")
-      cat("\n# RUN RF MACRO-F1: Evaluation                          #")
-      cat("\n########################################################\n\n")
-    timeEvaluate = system.time(resEval <- evaluate.rf.maf1(parameters))
-    
-    
-    cat("\n\n########################################################")
-      cat("\n# RUN RF MACRO-F1: Mean 10 Folds                       #")
-      cat("\n########################################################\n\n")
-    timeGather = system.time(resGE <- gather.eval.rf.maf1(parameters))
-    
-    
-    cat("\n\n#######################################################")
-      cat("\n# RUN RF MACRO-F1: Save Runtime                       #")
-      cat("\n#######################################################\n\n")
-    timesExecute = rbind(timeAllPartitions, timeLabelSpace, 
-                         timeBuild, timePreds,
-                         timeEvaluate, timeGather)
-    setwd(parameters$Folders$folderTested)
-    write.csv(timesExecute, "Run-Time-RF-Maf1.csv")
+    # 
+    # cat("\n\n######################################################")
+    #   cat("\n# RUN RF MACRO-F1: Build and Test Partitions         #")
+    #   cat("\n######################################################\n\n")
+    # timeBuild = system.time(resBuild <- build.rf.maf1(parameters))
+    # 
+    # 
+    # cat("\n\n#######################################################")
+    #   cat("\n# RUN RF MACRO-F1: Matrix Confusion                   #")
+    #   cat("\n#######################################################\n\n")
+    # timePreds = system.time(resGather <- gather.preds.rf.maf1(parameters))
+    # 
+    # 
+    # cat("\n\n########################################################")
+    #   cat("\n# RUN RF MACRO-F1: Evaluation                          #")
+    #   cat("\n########################################################\n\n")
+    # timeEvaluate = system.time(resEval <- evaluate.rf.maf1(parameters))
+    # 
+    # 
+    # cat("\n\n########################################################")
+    #   cat("\n# RUN RF MACRO-F1: Mean 10 Folds                       #")
+    #   cat("\n########################################################\n\n")
+    # timeGather = system.time(resGE <- gather.eval.rf.maf1(parameters))
+    # 
+    # 
+    # cat("\n\n#######################################################")
+    #   cat("\n# RUN RF MACRO-F1: Save Runtime                       #")
+    #   cat("\n#######################################################\n\n")
+    # timesExecute = rbind(timeAllPartitions, timeLabelSpace, 
+    #                      timeBuild, timePreds,
+    #                      timeEvaluate, timeGather)
+    # setwd(parameters$Folders$folderTested)
+    # write.csv(timesExecute, "Run-Time-RF-Maf1.csv")
     
     
   } else if(parameters$Config$Criteria=="mif1"){
-    
-    cat("\n\n########################################################")
-       cat("\n# RUN RF MICRO-F1: Build and Test Partitions          #")
-       cat("\n#######################################################\n\n")
-    timeBuild = system.time(resBuild <- build.rf.mif1(parameters))
-    
-    
-    cat("\n\n######################################################")
-      cat("\n# RUN RFR MICRO-F1: Matrix Confusion                 #")
-      cat("\n######################################################\n\n")
-    timePreds = system.time(resGather <- gather.preds.rf.mif1(parameters))
-    
-    
-    cat("\n\n########################################################")
-      cat("\n# RUN RF MICRO-F1: Evaluation                          #")
-      cat("\n########################################################\n\n")
-    timeEvaluate = system.time(resEval <- evaluate.rf.mif1(parameters))
-    
-    
-    cat("\n\n########################################################")
-      cat("\n# RUN RF MICRO-F1: Mean 10 Folds                       #")
-      cat("\n########################################################\n\n")
-    timeGather = system.time(resGE <- gather.eval.rf.mif1(parameters))
-    
-    
-    cat("\n\n#####################################################")
-      cat("\n# RUN RF MICRO-F1: Save Runtime                     #")
-      cat("\n#####################################################\n\n")
-    timesExecute = rbind(timeAllPartitions, timeLabelSpace, 
-                         timeBuild, timePreds,
-                         timeEvaluate, timeGather)
-    setwd(parameters$Folders$folderTested)
-    write.csv(timesExecute, "Run-Time-RF-Mif1.csv")
+    # 
+    # cat("\n\n########################################################")
+    #    cat("\n# RUN RF MICRO-F1: Build and Test Partitions          #")
+    #    cat("\n#######################################################\n\n")
+    # timeBuild = system.time(resBuild <- build.rf.mif1(parameters))
+    # 
+    # 
+    # cat("\n\n######################################################")
+    #   cat("\n# RUN RFR MICRO-F1: Matrix Confusion                 #")
+    #   cat("\n######################################################\n\n")
+    # timePreds = system.time(resGather <- gather.preds.rf.mif1(parameters))
+    # 
+    # 
+    # cat("\n\n########################################################")
+    #   cat("\n# RUN RF MICRO-F1: Evaluation                          #")
+    #   cat("\n########################################################\n\n")
+    # timeEvaluate = system.time(resEval <- evaluate.rf.mif1(parameters))
+    # 
+    # 
+    # cat("\n\n########################################################")
+    #   cat("\n# RUN RF MICRO-F1: Mean 10 Folds                       #")
+    #   cat("\n########################################################\n\n")
+    # timeGather = system.time(resGE <- gather.eval.rf.mif1(parameters))
+    # 
+    # 
+    # cat("\n\n#####################################################")
+    #   cat("\n# RUN RF MICRO-F1: Save Runtime                     #")
+    #   cat("\n#####################################################\n\n")
+    # timesExecute = rbind(timeAllPartitions, timeLabelSpace, 
+    #                      timeBuild, timePreds,
+    #                      timeEvaluate, timeGather)
+    # setwd(parameters$Folders$folderTested)
+    # write.csv(timesExecute, "Run-Time-RF-Mif1.csv")
     
     
     
@@ -202,7 +210,7 @@ execute.run.rf <- function(parameters){
     timesExecute = rbind(timeAllPartitions, timeLabelSpace, 
                          timeBuild, timePreds,
                          timeEvaluate, timeGather)
-    setwd(parameters$Folders$folderTested)
+    setwd(parameters$Directories$folderTested)
     write.csv(timesExecute, "Run-Time-RF-Silho.csv")
     
   }

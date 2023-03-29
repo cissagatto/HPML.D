@@ -10,18 +10,26 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General   #
 # Public License for more details.                                           #
 #                                                                            #
-# PhD Elaine Cecilia Gatto | Prof. Dr. Ricardo Cerri | Prof. Dr. Mauri       #
-# Ferrandin | Prof. Dr. Celine Vens | PhD Felipe Nakano Kenji                #
+# 1 - PhD Elaine Cecilia Gatto | Prof PhD Ricardo Cerri                      #
+# 2 - Prof PhD Mauri Ferrandin                                               #
+# 3 - Prof PhD Celine Vens | PhD Felipe Nakano Kenji                         #
+# 4 - Prof PhD Jesse Read                                                    #
 #                                                                            #
-# Federal University of São Carlos - UFSCar - https://www2.ufscar.br         #
-# Campus São Carlos - Computer Department - DC - https://site.dc.ufscar.br   #
+# 1 = Federal University of São Carlos - UFSCar - https://www2.ufscar.br     #
+# Campus São Carlos | Computer Department - DC - https://site.dc.ufscar.br | #
 # Post Graduate Program in Computer Science - PPGCC                          # 
-# http://ppgcc.dc.ufscar.br - Bioinformatics and Machine Learning Group      #
-# BIOMAL - http://www.biomal.ufscar.br                                       #
+# http://ppgcc.dc.ufscar.br | Bioinformatics and Machine Learning Group      #
+# BIOMAL - http://www.biomal.ufscar.br                                       # 
 #                                                                            #
-# Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium               #
+# 2 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
+# https://ufsc.br/                                                           #
+#                                                                            #
+# 3 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium           #
 # Medicine Department - https://kulak.kuleuven.be/                           #
 # https://kulak.kuleuven.be/nl/over_kulak/faculteiten/geneeskunde            #
+#                                                                            #
+# 4 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
+# d’Estienne d’Orves - 91120 - Palaiseau - FRANCE                            #
 #                                                                            #
 ##############################################################################
 
@@ -393,7 +401,7 @@ labelSpace <- function(parameters){
   while(k<=parameters$Config$Number.Folds){
     
     # get the correct fold cross-validation
-    nome_arquivo = paste(parameters$Folders$folderCVTR,
+    nome_arquivo = paste(parameters$Directories$folderCVTR,
                          "/", dataset_name, 
                          "-Split-Tr-", k, ".csv", sep="")
     
@@ -472,7 +480,7 @@ infoDataSet <- function(dataset){
 #########################################################################
 # Function to correctly convert CSV in ARFF
 converteArff <- function(arg1, arg2, arg3){
-  str = paste("java -jar ", parameters$Folders$folderUtils,
+  str = paste("java -jar ", parameters$Directories$folderUtils,
               "/R_csv_2_arff.jar ", arg1, " ", arg2, " ", arg3, sep="")
   print(system(str))
   cat("\n")
@@ -487,7 +495,7 @@ get.all.partitions <- function(parameters){
   
   retorno = list()
   
-  pasta.best = paste(parameters$Folders$folderPartitions, 
+  pasta.best = paste(parameters$Directories$folderPartitions, 
                      "/", parameters$Config$Dataset.Name, 
                      "/", parameters$Config$Dataset.Name, 
                      "-Best-Silhouete.csv", sep="")
@@ -508,7 +516,7 @@ get.all.partitions <- function(parameters){
     num.fold = best.fold$fold
     num.part = best.fold$part
     
-    Pasta = paste(parameters$Folders$folderPartitions, 
+    Pasta = paste(parameters$Directories$folderPartitions, 
                   "/", parameters$Config$Dataset.Name, "/Split-", 
                   f, sep="")
     pasta.groups = paste(Pasta, "/fold-", f, 
@@ -539,7 +547,7 @@ get.all.partitions <- function(parameters){
     gc()
   } # fim do fold
   
-  setwd(parameters$Folders$folderTested)
+  setwd(parameters$Directories$folderTested)
   write.csv(best.part.info, "best-part-info.csv", row.names = FALSE)
   write.csv(all.partitions.info, "all.partitions.info.csv", row.names = FALSE)
   write.csv(all.total.labels, "all.total.labels.csv", row.names = FALSE)
@@ -851,25 +859,28 @@ properties.clusters <- function(nomes.labels.clusters,
 
 
 
-roc.curva <- function(predictions, probabilities, test, Folder){
+##############################################################################
+# 
+##############################################################################
+roc.curva <- function(pred_bin, pred_proba, test, f, Folder){
   
   #####################################################################
-  y_pred2 = sapply(predictions, function(x) as.numeric(as.character(x)))
-  res.pred = mldr_evaluate(test, y_pred2)
+  pred_bin = sapply(pred_bin, function(x) as.numeric(as.character(x)))
+  res.bin = mldr_evaluate(test, pred_bin)
   
   #####################################################################
-  y_proba2 = sapply(probabilities, function(x) as.numeric(as.character(x)))
-  res.proba = mldr_evaluate(test, y_proba2)
+  pred_proba = sapply(pred_proba, function(x) as.numeric(as.character(x)))
+  res.proba = mldr_evaluate(test, pred_proba)
   
   ###############################################################
   # PLOTANDO ROC CURVE
-  name = paste(Folder, "/roc-pred.pdf", sep="")
+  name = paste(Folder, "/roc-bin.pdf", sep="")
   pdf(name, width = 10, height = 8)
-  print(plot(res.pred$roc, print.thres = 'all', print.auc=TRUE, 
+  print(plot(res.bin$roc, print.thres = 'all', print.auc=TRUE, 
              print.thres.cex=0.7, grid = TRUE, identity=TRUE,
              axes = TRUE, legacy.axes = TRUE, 
              identity.col = "#a91e0e", col = "#1161d5",
-             main = "binary predictions"))
+             main = paste("fold ", f," binary predictions")))
   dev.off()
   cat("\n")
   
@@ -881,23 +892,23 @@ roc.curva <- function(predictions, probabilities, test, Folder){
              print.thres.cex=0.7, grid = TRUE, identity=TRUE,
              axes = TRUE, legacy.axes = TRUE, 
              identity.col = "#a91e0e", col = "#1161d5",
-             main = "probabilities predictions"))
+             main = paste("fold ", f," probabilities")))
   dev.off()
   cat("\n")
   
   
   ###############################################################
   setwd(Folder)
-  write.csv(as.numeric(res.pred$roc$auc), "pred-auc.csv")
-  write.csv(as.numeric(res.pred$macro_auc), "pred-macro-auc.csv")
-  write.csv(as.numeric(res.pred$micro_auc), "pred-micro-auc.csv")
+  write.csv(as.numeric(res.bin$roc$auc), "roc-bin-auc.csv")
+  write.csv(as.numeric(res.bin$macro_auc), "roc-bin-macro-auc.csv")
+  write.csv(as.numeric(res.bin$micro_auc), "roc-bin-micro-auc.csv")
   
   
   ###############################################################
   setwd(Folder)
-  write.csv(as.numeric(res.proba$roc$auc), "proba-auc.csv")
-  write.csv(as.numeric(res.proba$macro_auc), "proba-macro-auc.csv")
-  write.csv(as.numeric(res.proba$micro_auc), "proba-micro-auc.csv")
+  write.csv(as.numeric(res.proba$roc$auc), "roc-proba-auc.csv")
+  write.csv(as.numeric(res.proba$macro_auc), "roc-proba-macro-auc.csv")
+  write.csv(as.numeric(res.proba$micro_auc), "roc-proba-micro-auc.csv")
   
   
   ###############################################################
@@ -961,71 +972,71 @@ roc.curva <- function(predictions, probabilities, test, Folder){
   
   ###############################################################
   # SALVANDO AS INFORMAÇÕES DO ROC SEPARADAMENTE
-  name = paste(Folder, "/roc-pred-1.txt", sep="")
+  name = paste(Folder, "/roc-bin-1.txt", sep="")
   output.file <- file(name, "wb")
   
   write(" ", file = output.file, append = TRUE)
   write("percent: ", file = output.file, append = TRUE)
-  write(res.pred$roc$percent, file = output.file, append = TRUE)
+  write(res.bin$roc$percent, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("sensitivities: ", file = output.file, append = TRUE)
-  write(res.pred$roc$sensitivities, file = output.file, append = TRUE)
+  write(res.bin$roc$sensitivities, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("specificities: ", file = output.file, append = TRUE)
-  write(res.pred$roc$specificities, file = output.file, append = TRUE)
+  write(res.bin$roc$specificities, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("thresholds: ", file = output.file, append = TRUE)
-  write(res.pred$roc$thresholds, file = output.file, append = TRUE)
+  write(res.bin$roc$thresholds, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("direction: ", file = output.file, append = TRUE)
-  write(res.pred$roc$direction, file = output.file, append = TRUE)
+  write(res.bin$roc$direction, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("cases: ", file = output.file, append = TRUE)
-  write(res.pred$roc$cases, file = output.file, append = TRUE)
+  write(res.bin$roc$cases, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("controls: ", file = output.file, append = TRUE)
-  write(res.pred$roc$controls, file = output.file, append = TRUE)
+  write(res.bin$roc$controls, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("auc: ", file = output.file, append = TRUE)
-  write(res.pred$roc$auc, file = output.file, append = TRUE)
+  write(res.bin$roc$auc, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("original predictor: ", file = output.file, append = TRUE)
-  write(res.pred$roc$original.predictor, file = output.file, append = TRUE)
+  write(res.bin$roc$original.predictor, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("original response: ", file = output.file, append = TRUE)
-  write(res.pred$roc$original.response, file = output.file, append = TRUE)
+  write(res.bin$roc$original.response, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("predictor: ", file = output.file, append = TRUE)
-  write(res.pred$roc$predictor, file = output.file, append = TRUE)
+  write(res.bin$roc$predictor, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("response: ", file = output.file, append = TRUE)
-  write(res.pred$roc$response, file = output.file, append = TRUE)
+  write(res.bin$roc$response, file = output.file, append = TRUE)
   
   write(" ", file = output.file, append = TRUE)
   write("levels: ", file = output.file, append = TRUE)
-  write(res.pred$roc$levels, file = output.file, append = TRUE)
+  write(res.bin$roc$levels, file = output.file, append = TRUE)
   
   close(output.file)
   
   
   ###############################################################
   # SALVANDO AS OUTRAS INFORMAÇÕES
-  name = paste(Folder, "/roc-pred-2.txt", sep="")
+  name = paste(Folder, "/roc-bin-2.txt", sep="")
   sink(name, type = "output")
-  print(res.pred$roc)
+  print(res.bin$roc)
   cat("\n\n")
-  str(res.pred)
+  str(res.bin)
   sink()
   
   
@@ -1040,30 +1051,30 @@ roc.curva <- function(predictions, probabilities, test, Folder){
 }
 
 
+##############################################################################
+# 
+##############################################################################
 predictions.information <- function(nomes.rotulos, 
-                                    proba, 
+                                    probas, 
                                     preds, 
                                     trues, 
+                                    thr,
                                     folder){
   
-  #####################################################################
-  pred.o = paste(colnames(preds), "-pred", sep="")
-  names(preds) = pred.o
+  bin.names = paste(nomes.rotulos, "-pred", sep="")
+  names(preds) = bin.names
   
-  true.labels = paste(colnames(trues), "-true", sep="")
-  names(trues) = true.labels
+  thr.names = paste(nomes.rotulos, "-thr", sep="")
+  names(thr) = thr.names
   
-  proba.n = paste(nomes.rotulos, "-proba", sep="")
-  names(proba) = proba.n
+  test.labels = paste(nomes.rotulos, "-true", sep="")
+  names(trues) = test.labels
   
-  all.predictions = cbind(proba, preds, trues)
-  setwd(folder)
-  write.csv(all.predictions, "predictions.csv", row.names = FALSE)
+  proba.names = paste(nomes.rotulos, "-proba", sep="")
+  names(probas) = proba.names
   
   ###############################################
-  bipartition = data.frame(trues, preds)
-  
-  # número de instâncias do conjunto
+  bipartition = data.frame(trues, probas)
   num.instancias = nrow(bipartition)
   
   # número de rótulos do conjunto
@@ -1148,13 +1159,12 @@ predictions.information <- function(nomes.rotulos,
   matriz_confusao_por_rotulos = data.frame(TPl, FPl, FNl, TNl)
   colnames(matriz_confusao_por_rotulos) = c("TP","FP", "FN", "TN")
   row.names(matriz_confusao_por_rotulos) = nomes.rotulos
-  name = paste(folder, "/matrix-confusion-2.csv", sep="")
+  name = paste(folder, "/my-thr-matrix-confusion.csv", sep="")
   write.csv(matriz_confusao_por_rotulos, name)
   
 }
 
-
-##################################################################################################
-# Please, any errors, contact us: elainececiliagatto@gmail.com                                   #
-# Thank you very much!                                                                           #
-##################################################################################################
+###############################################################################
+# Please, any errors, contact us: elainececiliagatto@gmail.com                #
+# Thank you very much!                                                        #
+###############################################################################

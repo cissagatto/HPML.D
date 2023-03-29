@@ -34,29 +34,74 @@
 ##############################################################################
 
 
-##################################################
-# SET WORK SPACE
-##################################################
-FolderRoot = "~/Standard-HPML"
-FolderScripts = "~/Standard-HPML/R"
+import sys
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier  
+from sklearn.metrics import average_precision_score
 
+if __name__ == '__main__':   
 
-library("foreign", quietly = TRUE)
-library("AggregateR", quietly = TRUE)
-library("dplyr", quietly = TRUE)
-library("stringr", quietly = TRUE)
-library("foreach", quietly = TRUE)
-library("doParallel", quietly = TRUE)
-library("parallel", quietly = TRUE)
-library("rJava", quietly = TRUE)
-library("RWeka", quietly = TRUE)
-library("mldr", quietly = TRUE)
-library("utiml", quietly = TRUE)
-library("multiROC", quietly = TRUE)
+    # obtendo argumentos da linha de comando
+    train = pd.read_csv(sys.argv[1]) # conjunto de treino
+    valid = pd.read_csv(sys.argv[2]) # conjunto de validação
+    test = pd.read_csv(sys.argv[3])  # conjunto de teste
+    start = int(sys.argv[4])         # inicio do espaço de rótulos    
+    directory = sys.argv[5]          # diretório para salvar as predições 
+    
+    # num_labels = 1
+    # train = pd.read_csv("/dev/shm/stand-GpositiveGO/Tested/Split-6/Group-2/GpositiveGO-split-tr-6-group-2.csv")
+    # valid = pd.read_csv("/dev/shm/stand-GpositiveGO/Tested/Split-6/Group-2/GpositiveGO-split-vl-6-group-2.csv")
+    # test = pd.read_csv("/dev/shm/stand-GpositiveGO/Tested/Split-6/Group-2/GpositiveGO-split-ts-6-group-2.csv")
+    # start = 912
+    # directory = "/dev/shm/stand-GpositiveGO/Tested/Split-6/Group-2"
+    
+    # juntando treino com validação
+    train = pd.concat([train,valid],axis=0).reset_index(drop=True)
+    
+    # treino: separando os atributos e os rótulos
+    X_train = train.iloc[:, :start]    # atributos 
+    Y_train  = train.iloc[:, start:] # rótulos 
+    
+    # teste: separando os atributos e os rótulos
+    X_test = test.iloc[:, :start]     # atributos
+    Y_test = test.iloc[:, start:] # rótulos verdadeiros
+    
+    # obtendo os nomes dos rótulos
+    labels_y_train = list(Y_train.columns)
+    labels_y_test = list(Y_test.columns)
+    
+    # obtendo os nomes dos atributos
+    attr_x_train = list(X_train.columns)
+    attr_x_test = list(X_test.columns)
+    
+    # parametros do classificador base
+    random_state = 0    
+    n_estimators = 200
+    
+    # inicializa o classificador base
+    rf = RandomForestClassifier(n_estimators = n_estimators, random_state = random_state)
+    
+    # treino
+    y = np.squeeze(Y_train.values)
+    rf.fit(X_train.values, y)
 
+    # predições binárias
+    y_pred_bin = pd.DataFrame(rf.predict(X_test))
+    y_pred_bin.columns = labels_y_test
 
-
-##################################################################################################
-# Please, any errors, contact us: elainececiliagatto@gmail.com                                   #
-# Thank you very much!                                                                           #
-##################################################################################################
+    # predições probabilísticas
+    probabilities = rf.predict_proba(X_test)
+    probabilities_2 = pd.DataFrame(probabilities)
+    probabilities_2.columns = [f'prob_0', f'prob_1']
+    
+    # setando nome do diretorio e arquivo para salvar
+    true = (directory + "/y_true.csv")     
+    pred = (directory + "/y_pred_bin.csv") 
+    proba = (directory + "/y_proba.csv")  
+    
+    #  salvando true labels and predict labels
+    y_pred_bin.to_csv(pred, index=False)
+    Y_test.to_csv(true, index=False)
+    probabilities_2.to_csv(proba, index=False)
+    
