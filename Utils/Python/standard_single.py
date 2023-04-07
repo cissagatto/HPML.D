@@ -98,7 +98,7 @@ if __name__ == '__main__':
     # setando nome do diretorio e arquivo para salvar
     true = (directory + "/y_true.csv")     
     pred = (directory + "/y_pred_bin.csv") 
-    proba = (directory + "/y_proba.csv")  
+    proba = (directory + "/y_pred_proba.csv")  
     
     #  salvando true labels and predict labels
     y_pred_bin.to_csv(pred, index=False)

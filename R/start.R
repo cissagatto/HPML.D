@@ -269,36 +269,36 @@ if(file.exists(str00)==FALSE){
 
 
 if(parameters$Config$Implementation =="clus"){
-  
-  cat("\n\nRUNNING CLUS\n")  
-  
-  setwd(FolderScripts)
-  source("run-clus.R")
-  
-  timeFinal <- system.time(results <- execute.run.clus(parameters))
-  result_set <- t(data.matrix(timeFinal))
-  setwd(parameters$Folders$folderTested)
-  write.csv(result_set, "Runtime.csv")
-  
-  print(system(paste("rm -r ", diretorios$folderDatasets, sep="")))
-  print(system(paste("rm -r ", diretorios$folderPartitions, sep="")))
-  
-  cat("\n\nCOPY TO GOOGLE DRIVE")
-  origem = parameters$Folders$folderTested
-  destino = paste("nuvem:Standard-HPMLs/",
-                  parameters$Config$Implementation, "/", 
-                  parameters$Config$Similarity, "/", 
-                  parameters$Config$Criteria, "/", 
-                  parameters$Config$Dataset.Name, sep="")
-  comando1 = paste("rclone -P copy ", origem, " ", destino, sep="")
-  cat("\n", comando1, "\n")
-  a = print(system(comando1))
-  a = as.numeric(a)
-  if(a != 0) {
-    stop("Erro RCLONE")
-    quit("yes")
-  }
-  
+  # 
+  # cat("\n\nRUNNING CLUS\n")  
+  # 
+  # setwd(FolderScripts)
+  # source("run-clus.R")
+  # 
+  # timeFinal <- system.time(results <- execute.run.clus(parameters))
+  # result_set <- t(data.matrix(timeFinal))
+  # setwd(parameters$Folders$folderTested)
+  # write.csv(result_set, "Runtime.csv")
+  # 
+  # print(system(paste("rm -r ", diretorios$folderDatasets, sep="")))
+  # print(system(paste("rm -r ", diretorios$folderPartitions, sep="")))
+  # 
+  # cat("\n\nCOPY TO GOOGLE DRIVE")
+  # origem = parameters$Folders$folderTested
+  # destino = paste("nuvem:Standard-HPMLs/",
+  #                 parameters$Config$Implementation, "/", 
+  #                 parameters$Config$Similarity, "/", 
+  #                 parameters$Config$Criteria, "/", 
+  #                 parameters$Config$Dataset.Name, sep="")
+  # comando1 = paste("rclone -P copy ", origem, " ", destino, sep="")
+  # cat("\n", comando1, "\n")
+  # a = print(system(comando1))
+  # a = as.numeric(a)
+  # if(a != 0) {
+  #   stop("Erro RCLONE")
+  #   quit("yes")
+  # }
+  # 
   
   # cat("\n####################################################################")
   # cat("\n# Compress folders and files                                       #")

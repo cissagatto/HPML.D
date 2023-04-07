@@ -78,7 +78,7 @@ if __name__ == '__main__':
     # setando nome do diretorio e arquivo para salvar
     true = (directory + "/y_true.csv")     
     pred = (directory + "/y_pred_bin.csv") 
-    proba = (directory + "/y_proba.csv")  
+    proba = (directory + "/y_pred_proba.csv")  
     
     # parametros do classificador base
     random_state = 0    
