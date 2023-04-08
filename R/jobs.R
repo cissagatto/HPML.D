@@ -338,7 +338,7 @@ while(p<=length(Implementation.1)){
           write(" ", file = output.file, append = TRUE)
           write("echo EXECUTANDO", file = output.file, append = TRUE)
           str = paste("singularity run --app Rscript instance://EXPS",
-                      a, " /Standard-HPML/R/start.R \"/Standard-HPML/config-files-apptainer/",
+                      a, " /Standard-HPML/R/standard.R \"/Standard-HPML/config-files-apptainer/",
                       Implementation.1[p], "/", Similarity.1[s], "/", 
                       Dendrogram.1[f], "/", Criteria.1[w], "/", 
                       config.file.name, "\"", sep="")
