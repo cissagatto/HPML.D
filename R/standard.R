@@ -336,6 +336,30 @@ if(parameters$Config$Implementation =="clus"){
   print(system(paste("rm -r ", parameters$Directories$folderPartitions, sep="")))
   
   
+  
+  cat("\n\n###################################################################")
+  cat("\n# ECC: COMPRESS RESULTS                                      #")
+  cat("\n#####################################################################\n\n")
+  str3 = paste("tar -zcvf ", parameters$Directories$folderTested , "/",
+               parameters$DatasetInfo$Name, "-results-stand.tar.gz ",
+               parameters$Directories$folderTested, sep="")
+  print(system(str3))
+  
+  
+  cat("\n\n###################################################################")
+  cat("\n# ====> GPC: COPY TO HOME                                     #")
+  cat("\n#####################################################################\n\n")
+  
+  str0 = "~/Standard-HPML/Reports/"
+  if(dir.exists(str0)==FALSE){dir.create(str0)}
+  
+  str3 = paste(parameters$Directories$folderTested, "/",
+               parameters$DatasetInfo$Name, "-results-stand.tar.gz", sep="")
+  
+  str4 = paste("cp ", str3, " ", str0, sep="")
+  print(system(str4))
+  
+  
   cat("\n\nCOPY TO GOOGLE DRIVE")
   origem = parameters$Directories$folderTested
   destino = paste("nuvem:Standard-HPML/",
