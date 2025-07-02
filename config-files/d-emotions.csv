@@ -1,0 +1,13 @@
+Config, Value
+FolderScripts, ~/HPML.D/R
+Dataset_Path, ~/HPML.D/Datasets
+Temporary_Path, /tmp/d-emotions
+Partitions_Path, ~/HPML.D/Best-Partitions/
+Implementation, rf
+Similarity, jaccard
+Dendrogram, ward.D2
+Criteria, silho
+Dataset_Name, emotions
+Number_Dataset, 26
+Number_Folds, 10
+Number_Cores, 1

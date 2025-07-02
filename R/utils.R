@@ -1,6 +1,6 @@
 ##############################################################################
-# STANDARD HPML                                                              #
-# Copyright (C) 2023                                                         #
+# STANDARD HYBRID PARTITIONS FOR MULTI-LABEL CLASSIFICATION                  #
+# Copyright (C) 2025                                                         #
 #                                                                            #
 # This code is free software: you can redistribute it and/or modify it under #
 # the terms of the GNU General Public License as published by the Free       #
@@ -10,38 +10,43 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General   #
 # Public License for more details.                                           #
 #                                                                            #
-# 1 - PhD Elaine Cecilia Gatto | Prof PhD Ricardo Cerri                      #
-# 2 - Prof PhD Mauri Ferrandin                                               #
-# 3 - Prof PhD Celine Vens | PhD Felipe Nakano Kenji                         #
-# 4 - Prof PhD Jesse Read                                                    #
+# 1 - Prof Elaine Cecilia Gatto                                              #
+# 2 - Prof PhD Ricardo Cerri                                                 #
+# 3 - Prof PhD Mauri Ferrandin                                               #
+# 4 - Prof PhD Celine Vens                                                   #
+# 5 - PhD Felipe Nakano Kenji                                                #
+# 6 - Prof PhD Jesse Read                                                    #
 #                                                                            #
 # 1 = Federal University of São Carlos - UFSCar - https://www2.ufscar.br     #
 # Campus São Carlos | Computer Department - DC - https://site.dc.ufscar.br | #
 # Post Graduate Program in Computer Science - PPGCC                          # 
 # http://ppgcc.dc.ufscar.br | Bioinformatics and Machine Learning Group      #
 # BIOMAL - http://www.biomal.ufscar.br                                       # 
-#                                                                            #
-# 2 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
+#                                                                            # 
+# 1 = Federal University of Lavras - UFLA                                    #
+#                                                                            # 
+# 2 = State University of São Paulo - USP                                    #
+#                                                                            # 
+# 3 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
 # https://ufsc.br/                                                           #
 #                                                                            #
-# 3 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium           #
+# 4 and 5 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium     #
 # Medicine Department - https://kulak.kuleuven.be/                           #
 # https://kulak.kuleuven.be/nl/over_kulak/faculteiten/geneeskunde            #
 #                                                                            #
-# 4 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
+# 6 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
 # d’Estienne d’Orves - 91120 - Palaiseau - FRANCE                            #
 #                                                                            #
 ##############################################################################
 
 
-
-##################################################
-# SET WORK SPACE
-##################################################
-FolderRoot = "~/Standard-HPML"
-FolderScripts = "~/Standard-HPML/R"
-
-
+# cat("\n################################")
+# cat("\n# Set Work Space               #")
+# cat("\n###############################\n\n")
+# library(here)
+# library(stringr)
+# FolderRoot <- here::here()
+# setwd(FolderRoot)
 
 
 #########################################################################
@@ -58,12 +63,12 @@ FolderScripts = "~/Standard-HPML/R"
 #########################################################################
 directories <- function(parameters){
   
-  FolderRoot = "~/Standard-HPML"
-  FolderScripts = "~/Standard-HPML/R"
-  
   retorno = list()
   
   folderResults = parameters$Config$Folder.Results
+  
+  folderScripts = parameters$Config$FolderScripts
+  retorno$folderScripts = folderScripts
   
   #############################################################################
   # RESULTS FOLDER:                                                           #
@@ -106,7 +111,7 @@ directories <- function(parameters){
   # PYTHON FOLDER:                                                           #
   # Folder that contains the python scripts                                  #
   #############################################################################
-  folderPython = paste(folderUtils, "/Python", sep="")
+  folderPython = paste(FolderRoot, "/Python", sep="")
   if(dir.exists(folderPython) == TRUE){
     setwd(folderPython)
     dir_folderPython = dir(folderPython)
@@ -123,17 +128,18 @@ directories <- function(parameters){
   #############################################################################
   #
   #############################################################################
-  # folderReports = paste(FolderRoot, "/Reports", sep="")
-  # if(dir.exists(folderReports) == TRUE){
-  #   setwd(folderReports)
-  #   dir_folderReports = dir(folderReports)
-  #   n_folderReports = length(dir_folderReports)
-  # } else {
-  #   dir.create(folderReports)
-  #   setwd(folderReports)
-  #   dir_folderReports = dir(folderReports)
-  #   n_folderReports = length(dir_folderReports)
-  # }
+  folderReports = paste(FolderRoot, "/Reports", sep="")
+   if(dir.exists(folderReports) == TRUE){
+     setwd(folderReports)
+     dir_folderReports = dir(folderReports)
+     n_folderReports = length(dir_folderReports)
+   } else {
+     dir.create(folderReports)
+     setwd(folderReports)
+     dir_folderReports = dir(folderReports)
+     n_folderReports = length(dir_folderReports)
+   }
+  retorno$folderReports = folderReports
   
   #############################################################################
   # TESTED FOLDER                                                             #
@@ -598,11 +604,7 @@ properties.clusters <- function(nomes.labels.clusters,
                          median = treino.median,
                          sum = treino.sum, max = treino.max, 
                          min = treino.min, treino.quartis)
-  name = paste(folderSave, "/summary-train.csv", sep="")
-  write.csv(treino.summary, name)
   
-  
-  ##########################################################################
   teste.sd = apply(teste.labels , 2, sd)
   teste.mean = apply(teste.labels , 2, mean)
   teste.median = apply(teste.labels , 2, median)
@@ -615,11 +617,7 @@ properties.clusters <- function(nomes.labels.clusters,
                         median = teste.median,
                         sum = teste.sum, max = teste.max, 
                         min = teste.min, teste.quartis)
-  name = paste(folderSave, "/summary-test.csv", sep="")
-  write.csv(teste.summary, name)
   
-  
-  ##########################################################################
   val.sd = apply(val.labels , 2, sd)
   val.mean = apply(val.labels , 2, mean)
   val.median = apply(val.labels , 2, median)
@@ -632,11 +630,7 @@ properties.clusters <- function(nomes.labels.clusters,
                       median = val.median,
                       sum = val.sum, max = val.max, 
                       min = val.min, val.quartis)
-  name = paste(folderSave, "/summary-val.csv", sep="")
-  write.csv(val.summary, name)
   
-  
-  ##########################################################################
   tv.sd = apply(tv.labels , 2, sd)
   tv.mean = apply(tv.labels , 2, mean)
   tv.median = apply(tv.labels , 2, median)
@@ -649,105 +643,52 @@ properties.clusters <- function(nomes.labels.clusters,
                      median = tv.median,
                      sum = tv.sum, max = tv.max, 
                      min = tv.min, tv.quartis)
-  name = paste(folderSave, "/summary-tv.csv", sep="")
-  write.csv(tv.summary, name)
   
+  r1 <- data.frame(fold, cluster, stat = rownames(val.summary), type = "val", val.summary, row.names = NULL)
+  r2 <- data.frame(fold, cluster, stat = rownames(teste.summary), type = "test", teste.summary, row.names = NULL)
+  r3 <- data.frame(fold, cluster, stat = rownames(treino.summary), type = "train", treino.summary, row.names = NULL)
+  r4 <- data.frame(fold, cluster, stat = rownames(tv.summary), type = "tv", tv.summary, row.names = NULL)
   
-  ##################################################################
-  treino.num.positive.instances = apply(treino.labels , 2, sum)
-  teste.num.positive.instances = apply(teste.labels , 2, sum)
-  val.num.positive.instances = apply(val.labels , 2, sum)
-  tv.num.positive.instances = apply(tv.labels , 2, sum)
-  
-  
-  ##################################################################
-  treino.num.instancias = nrow(train)
-  treino.num.negative.instances = treino.num.instancias - treino.num.positive.instances 
-  
-  teste.num.instancias = nrow(test)
-  teste.num.negative.instances = teste.num.instancias - teste.num.positive.instances 
-  
-  val.num.instancias = nrow(val)
-  val.num.negative.instances = val.num.instancias - val.num.positive.instances 
-  
-  tv.num.instancias = nrow(tv)
-  tv.num.negative.instances = tv.num.instancias - treino.num.positive.instances 
-  
-  todos = rbind(treino.num.positive.instances, treino.num.negative.instances,
-                teste.num.positive.instances, teste.num.negative.instances,
-                val.num.positive.instances, val.num.negative.instances,
-                tv.num.positive.instances, tv.num.negative.instances)
-  
-  name = paste(folderSave, "/instances-pos-neg.csv", sep="")
-  write.csv(todos, name)
-  
-  
-  ##########################################################################
-  treino.num.positive.instances = data.frame(treino.num.positive.instances)
-  treino.num.negative.instances = data.frame(treino.num.negative.instances)
-  
-  teste.num.positive.instances = data.frame(teste.num.positive.instances)
-  teste.num.negative.instances = data.frame(teste.num.negative.instances)
-  
-  val.num.positive.instances = data.frame(val.num.positive.instances)
-  val.num.negative.instances = data.frame(val.num.negative.instances)
-  
-  tv.num.positive.instances = data.frame(tv.num.positive.instances)
-  tv.num.negative.instances = data.frame(tv.num.negative.instances)
-  
+  sumario <- rbind(r1, r2, r3, r4)
+  name = paste(folderSave, "/summary.csv", sep="")
+  write.csv(sumario, name, row.names = FALSE)
   
   ##################################################################
-  label = rownames(treino.num.positive.instances)
+  instances.tr <- data.frame(
+    label = names(treino.labels),
+    negative = colSums(treino.labels == 0),
+    positive = colSums(treino.labels == 1)
+  )
+  rownames(instances.tr) = NULL
+  instances.tr = data.frame(fold, cluster, type = "train", instances.tr)
   
-  ##################################################################
-  treino.num.positive.instances = data.frame(label , frequency = treino.num.positive.instances$treino.num.positive.instances)
-  treino.num.negative.instances = data.frame(label , frequency = treino.num.negative.instances$treino.num.negative.instances)
+  instances.ts <- data.frame(
+    label = names(teste.labels),
+    negative = colSums(teste.labels == 0),
+    positive = colSums(teste.labels == 1)
+  )
+  rownames(instances.ts) = NULL
+  instances.ts = data.frame(fold, cluster, type = "test", instances.ts)
   
-  teste.num.positive.instances = data.frame(label , frequency = teste.num.positive.instances$teste.num.positive.instances)
-  teste.num.negative.instances = data.frame(label , frequency = teste.num.negative.instances$teste.num.negative.instances)
+  instances.vl <- data.frame(
+    label = names(val.labels),
+    negative = colSums(val.labels == 0),
+    positive = colSums(val.labels == 1)
+  )
+  rownames(instances.vl) = NULL
+  instances.vl = data.frame(fold, cluster, type = "val", instances.vl)
   
-  val.num.positive.instances = data.frame(label , frequency = val.num.positive.instances$val.num.positive.instances)
-  val.num.negative.instances = data.frame(label , frequency = val.num.negative.instances$val.num.negative.instances)
+  instances.tv <- data.frame(
+    label = names(tv.labels),
+    negative = colSums(tv.labels == 0),
+    positive = colSums(tv.labels == 1)
+  )
+  rownames(instances.tv) = NULL
+  instances.tv = data.frame(fold, cluster, type = "tv", instances.tv)
   
-  tv.num.positive.instances = data.frame(label , frequency = tv.num.positive.instances$tv.num.positive.instances)
-  tv.num.negative.instances = data.frame(label , frequency = tv.num.negative.instances$tv.num.negative.instances)
-  
-  
-  ##########################################################################
-  treino.num.positive.instances = arrange(treino.num.positive.instances, desc(frequency))
-  ultimo = nrow(treino.num.positive.instances)
-  treino.max = data.frame(treino.num.positive.instances[1,])
-  treino.min = data.frame(treino.num.positive.instances[ultimo,])
-  
-  teste.num.positive.instances = arrange(teste.num.positive.instances, desc(frequency))
-  ultimo = nrow(teste.num.positive.instances)
-  teste.max = data.frame(teste.num.positive.instances[1,])
-  teste.min = data.frame(teste.num.positive.instances[ultimo,])
-  
-  val.num.positive.instances = arrange(val.num.positive.instances, desc(frequency))
-  ultimo = nrow(val.num.positive.instances)
-  val.max = data.frame(val.num.positive.instances[1,])
-  val.min = data.frame(val.num.positive.instances[ultimo,])
-  
-  tv.num.positive.instances = arrange(tv.num.positive.instances, desc(frequency))
-  ultimo = nrow(tv.num.positive.instances)
-  tv.max = data.frame(tv.num.positive.instances[1,])
-  tv.min = data.frame(tv.num.positive.instances[ultimo,])
-  
-  max.min = rbind(treino.max, treino.min,
-                  teste.max, teste.min,
-                  val.max, val.min,
-                  tv.max, tv.min)
-  
-  set = c("train.max", "train.min",
-          "teste.max", "teste.min",
-          "val.max", "val.min",
-          "tv.max", "tv.min")
-  
-  final = data.frame(set, max.min)
-  
-  name = paste(folderSave, "/labels-max-min.csv", sep="")
-  write.csv(final, name, row.names = FALSE)
+  allposneg = rbind(instances.tr, instances.ts, instances.vl, instances.tv)
+  name = paste0(folderSave, "/num-pos-neg.csv")
+  write.csv(allposneg , name, row.names = FALSE)
   
   ##########################################################################
   mldr.treino = mldr_from_dataframe(train, labelIndices = labels.indices)
@@ -755,103 +696,109 @@ properties.clusters <- function(nomes.labels.clusters,
   mldr.val = mldr_from_dataframe(val, labelIndices = labels.indices)
   mldr.tv = mldr_from_dataframe(tv, labelIndices = labels.indices)
   
-  
   ##########################################################################
-  labelsets = data.frame(mldr.treino$labelsets)
-  names(labelsets) = c("labelset", "frequency")
-  name = paste(folderSave, "/labelsets-train.csv", sep="")
-  write.csv(labelsets, name, row.names = FALSE)
+  labelsets.train = data.frame(mldr.treino$labelsets)
+  names(labelsets.train) = c("labelset", "frequency")
+  labelsets.train = data.frame(type = "train", labelsets.train)
   
-  rm(labelsets)
-  labelsets = data.frame(mldr.teste$labelsets)
-  names(labelsets) = c("labelset", "frequency")
-  name = paste(folderSave, "/labelsets-test.csv", sep="")
-  write.csv(labelsets, name, row.names = FALSE)
+  labelsets.test = data.frame(mldr.teste$labelsets)
+  names(labelsets.test) = c("labelset", "frequency")
+  labelsets.test = data.frame(type = "test", labelsets.test)
   
-  rm(labelsets)
-  labelsets = data.frame(mldr.val$labelsets)
-  names(labelsets) = c("labelset", "frequency")
-  name = paste(folderSave, "/labelsets-val.csv", sep="")
-  write.csv(labelsets, name, row.names = FALSE)
+  labelsets.val = data.frame(mldr.val$labelsets)
+  names(labelsets.val) = c("labelset", "frequency")
+  labelsets.val = data.frame(type = "val", labelsets.val)
   
-  rm(labelsets)
-  labelsets = data.frame(mldr.tv$labelsets)
-  names(labelsets) = c("labelset", "frequency")
-  name = paste(folderSave, "/labelsets-tv.csv", sep="")
-  write.csv(labelsets, name, row.names = FALSE)
+  labelsets.tv = data.frame(mldr.tv$labelsets)
+  names(labelsets.tv) = c("labelset", "frequency")
+  labelsets.tv = data.frame(type = "tv", labelsets.tv)
   
+  res = rbind(labelsets.train, labelsets.test, labelsets.val, labelsets.tv)
+  res = cbind(fold, cluster, res)
   
+  name = paste(folderSave, "/labelsets.csv", sep="")
+  write.csv(res, name, row.names = FALSE)
+ 
   ##########################################################################
-  labels = data.frame(mldr.treino$labels)
-  name = paste(folderSave, "/labels-train.csv", sep="")
-  write.csv(labels, name)
+  labels.train = data.frame(mldr.treino$labels)
+  labels.test = data.frame(mldr.teste$labels)
+  labels.val = data.frame(mldr.val$labels)
+  labels.tv = data.frame(mldr.tv$labels)
   
-  rm(labels)
-  labels = data.frame(mldr.teste$labels)
-  name = paste(folderSave, "/labels-test.csv", sep="")
-  write.csv(labels, name)
+  r1 <- data.frame(stat = rownames(labels.train), type = "val", labels.train, row.names = NULL)
+  r2 <- data.frame(stat = rownames(labels.test), type = "test", labels.test, row.names = NULL)
+  r3 <- data.frame(stat = rownames(labels.val), type = "train", labels.val, row.names = NULL)
+  r4 <- data.frame(stat = rownames(labels.tv), type = "tv", labels.tv, row.names = NULL)
   
-  rm(labels)
-  labels = data.frame(mldr.val$labels)
-  name = paste(folderSave, "/labels-val.csv", sep="")
-  write.csv(labels, name)
-  
-  rm(labels)
-  labels = data.frame(mldr.tv$labels)
-  name = paste(folderSave, "/labels-tv.csv", sep="")
-  write.csv(labels, name)
+  all.labels <- rbind(r1, r2, r3, r4)
+  name = paste(folderSave, "/labels-info.csv", sep="")
+  write.csv(all.labels, name, row.names = FALSE)
   
   
   ##########################################################################  
-  properties = data.frame(mldr.treino$measures)
-  properties = cbind(fold, cluster, properties)
-  name = paste(folderSave , "/properties-train.csv", sep="")
-  write.csv(properties , name, row.names = FALSE)
+  properties.train = data.frame(mldr.treino$measures)
+  properties.train = cbind(fold, cluster, properties.train)
+  properties.train = data.frame(type = "train", properties.train)
   
-  rm(properties)
-  properties = data.frame(mldr.teste$measures)
-  properties = cbind(fold, cluster, properties)
-  name = paste(folderSave , "/properties-test.csv", sep="")
-  write.csv(properties , name, row.names = FALSE)
+  properties.test = data.frame(mldr.teste$measures)
+  properties.test = cbind(fold, cluster, properties.test)
+  properties.test = data.frame(type = "test", properties.test)
   
-  rm(properties)
-  properties = data.frame(mldr.val$measures)
-  properties = cbind(fold, cluster, properties)
-  name = paste(folderSave , "/properties-val.csv", sep="")
-  write.csv(properties , name, row.names = FALSE)
+  properties.val = data.frame(mldr.val$measures)
+  properties.val = cbind(fold, cluster, properties.val)
+  properties.val = data.frame(type = "val", properties.val)
   
-  rm(properties)
-  properties = data.frame(mldr.tv$measures)
-  properties = cbind(fold, cluster, properties)
-  name = paste(folderSave , "/properties-tv.csv", sep="")
-  write.csv(properties , name, row.names = FALSE)
+  properties.tv = data.frame(mldr.tv$measures)
+  properties.tv = cbind(fold, cluster, properties.tv)
+  properties.tv = data.frame(type = "tv", properties.tv)
   
+  measures = rbind(properties.train, properties.test, properties.val, properties.tv)
+  measures = cbind(fold, cluster, measures)
+  
+  name = paste(folderSave , "/measures.csv", sep="")
+  write.csv(measures , name, row.names = FALSE)
   
   ##########################################################################  
-  # name = paste(folderSave , "/plot-train-fold-", f, ".pdf", sep="")
-  # pdf(name, width = 10, height = 8)
-  # print(plot(mldr.treino))
-  # dev.off()
-  # cat("\n")
-  # 
-  # name = paste(folderSave , "/plot-test-fold-", f, ".pdf", sep="")
-  # pdf(name, width = 10, height = 8)
-  # print(plot(mldr.teste))
-  # dev.off()
-  # cat("\n")
-  # 
-  # name = paste(folderSave , "/plot-val-fold-", f, ".pdf", sep="")
-  # pdf(name, width = 10, height = 8)
-  # print(plot(mldr.val))
-  # dev.off()
-  # cat("\n")
-  # 
-  # name = paste(folderSave , "/plot-tv-fold-", f, ".pdf", sep="")
-  # pdf(name, width = 10, height = 8)
-  # print(plot(mldr.tv))
-  # dev.off()
-  # cat("\n")
+  label.space.tr = train[,labels.indices]
+  ld.train = dependency(label.space.tr)
   
+  label.space.ts = test[,labels.indices]
+  ld.test = dependency(label.space.ts)
+  
+  label.space.vl = val[,labels.indices]
+  ld.val = dependency(label.space.vl)
+  
+  label.space.tv = tv[,labels.indices]
+  ld.tv = dependency(label.space.tv)
+  
+  ld = data.frame(fold, cluster, 
+                  train = ld.train$label.dependency, 
+                  test = ld.test$label.dependency, 
+                  val = ld.val$label.dependency, 
+                  tv = ld.tv$label.dependency)
+  name = paste(folderSave , "/dependency.csv", sep="")
+  write.csv(ld, name, row.names = FALSE)
+  
+  ##################################################################
+  name = paste(folderSave , "/contingency-tr.txt", sep="")
+  sink(name )
+  print(table(label.space.tr))
+  sink()
+  
+  name = paste(folderSave , "/contingency-ts.txt", sep="")
+  sink(name )
+  print(table(label.space.ts))
+  sink()
+  
+  name = paste(folderSave , "/contingency-vl.txt", sep="")
+  sink(name )
+  print(table(label.space.vl))
+  sink()
+  
+  name = paste(folderSave , "/contingency-tv.txt", sep="")
+  sink(name )
+  print(table(label.space.tv))
+  sink()
   
 }
 
@@ -863,9 +810,6 @@ properties.clusters <- function(nomes.labels.clusters,
 # 
 ##############################################################################
 roc.curva <- function(f, y_pred, test, Folder, nome){
-  
-  #####################################################################
-  y_pred= sapply(y_pred, function(x) as.numeric(as.character(x)))
   res = mldr_evaluate(test, y_pred)
   
   ###############################################################
@@ -971,8 +915,8 @@ matrix.confusao <- function(true, pred, type, salva, nomes.rotulos){
   num.negative.instances = num.instancias - num.positive.instances   # número de instâncias negativas  # salvando
   
   res = rbind(num.positive.instances, num.negative.instances)
-  name = paste(salva, "/", type, "-ins-pn.csv", sep="")
-  write.csv(res, name)
+  #name = paste(salva, "/", type, "-ins-pn.csv", sep="")
+  #write.csv(res, name)
   
   true_1 = data.frame(ifelse(true==1,1,0)) # calcular rótulo verdadeiro igual a 1
   total_true_1 = apply(true_1, 2, sum)
@@ -988,8 +932,8 @@ matrix.confusao <- function(true, pred, type, salva, nomes.rotulos){
   
   matriz_totais = cbind(total_true_0, total_true_1, total_pred_0, total_pred_1)
   row.names(matriz_totais) = nomes.rotulos
-  name = paste(salva, "/", type, "-trues-preds.csv", sep="")
-  write.csv(matriz_totais, name)
+  #name = paste(salva, "/", type, "-trues-preds.csv", sep="")
+  #write.csv(matriz_totais, name)
   
   # Verdadeiro Positivo: O modelo previu 1 e a resposta correta é 1
   TPi  = data.frame(ifelse((true_1 & true_1),1,0))
@@ -1013,7 +957,7 @@ matrix.confusao <- function(true, pred, type, salva, nomes.rotulos){
   
   fpnt = data.frame(TPi, FPi, FNi, TNi)
   name = paste(salva, "/", type, "-tfpn.csv", sep="")
-  write.csv(fpnt, name, row.names = FALSE)
+  #write.csv(fpnt, name, row.names = FALSE)
   
   # total de verdadeiros positivos
   TPl = apply(TPi, 2, sum)
@@ -1074,6 +1018,67 @@ avaliacao <- function(f, y_true, y_pred, salva, nome){
   
   
 }
+
+
+
+##################################################################
+#' @title Compute Label Dependency for a Binary Label Matrix
+#'
+#' @description
+#' Computes the label dependency value based on the approach from Luaces et al. (2012),
+#' using the Pearson correlation of label pairs, weighted by their co-occurrence.
+#' It only considers the lower triangle of the pairwise matrix to avoid redundancy.
+#'
+#' @param label.space A binary matrix or data frame (instances × labels), where 1 indicates label presence.
+#'
+#' @return A list with:
+#' \itemize{
+#'   \item \code{label.dependency} - A numeric value representing the overall label dependency.
+#' }
+#'
+#' @examples
+#' label.space <- matrix(c(1,0,1, 0,1,1, 1,1,0), ncol=3, byrow=TRUE)
+#' result <- dependency(label.space)
+#' print(result$label.dependency)
+#'
+#' @references
+#' Luaces, O., Díez, J., Barranquero, J., del Coz, J. J., & Bahamonde, A. (2012).
+#' Binary relevance efficacy for multilabel classification. Progress in Artificial Intelligence, 1(4), 303–313.
+#'
+#' @import Matrix
+#' @export
+dependency <- function(label.space) {
+  retorno <- list()
+  
+  library(Matrix)
+  label.space <- Matrix(as.matrix(label.space), sparse = TRUE)
+  label.space <- as(as.matrix(label.space), "dgCMatrix")
+  
+  pearson.matrix <- cor(as.matrix(label.space), method = "pearson")
+  pearson.matrix[is.na(pearson.matrix)] <- 0
+  
+  intersection.matrix <- t(label.space) %*% label.space
+  intersection.matrix <- as.matrix(intersection.matrix)
+  
+  pearson.abs <- abs(pearson.matrix)
+  pearson.abs[upper.tri(pearson.abs)] <- 0
+  intersection.matrix[upper.tri(intersection.matrix)] <- 0
+  
+  produto <- pearson.abs * intersection.matrix
+  
+  soma_produto <- sum(produto)
+  soma_intersecoes <- sum(intersection.matrix)
+  
+  retorno$label.dependency <- if (soma_intersecoes > 0) {
+    soma_produto / soma_intersecoes
+  } else {
+    0
+  }
+  
+  return(retorno)
+}
+
+
 
 ###############################################################################
 # Please, any errors, contact us: elainececiliagatto@gmail.com                #

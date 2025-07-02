@@ -1,6 +1,6 @@
 ##############################################################################
-# STANDARD HPML                                                              #
-# Copyright (C) 2023                                                         #
+# STANDARD HYBRID PARTITIONS FOR MULTI-LABEL CLASSIFICATION                  #
+# Copyright (C) 2025                                                         #
 #                                                                            #
 # This code is free software: you can redistribute it and/or modify it under #
 # the terms of the GNU General Public License as published by the Free       #
@@ -10,35 +10,50 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General   #
 # Public License for more details.                                           #
 #                                                                            #
-# 1 - PhD Elaine Cecilia Gatto | Prof PhD Ricardo Cerri                      #
-# 2 - Prof PhD Mauri Ferrandin                                               #
-# 3 - Prof PhD Celine Vens | PhD Felipe Nakano Kenji                         #
-# 4 - Prof PhD Jesse Read                                                    #
+# 1 - Prof Elaine Cecilia Gatto                                              #
+# 2 - Prof PhD Ricardo Cerri                                                 #
+# 3 - Prof PhD Mauri Ferrandin                                               #
+# 4 - Prof PhD Celine Vens                                                   #
+# 5 - PhD Felipe Nakano Kenji                                                #
+# 6 - Prof PhD Jesse Read                                                    #
 #                                                                            #
 # 1 = Federal University of São Carlos - UFSCar - https://www2.ufscar.br     #
 # Campus São Carlos | Computer Department - DC - https://site.dc.ufscar.br | #
 # Post Graduate Program in Computer Science - PPGCC                          # 
 # http://ppgcc.dc.ufscar.br | Bioinformatics and Machine Learning Group      #
 # BIOMAL - http://www.biomal.ufscar.br                                       # 
-#                                                                            #
-# 2 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
+#                                                                            # 
+# 1 = Federal University of Lavras - UFLA                                    #
+#                                                                            # 
+# 2 = State University of São Paulo - USP                                    #
+#                                                                            # 
+# 3 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
 # https://ufsc.br/                                                           #
 #                                                                            #
-# 3 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium           #
+# 4 and 5 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium     #
 # Medicine Department - https://kulak.kuleuven.be/                           #
 # https://kulak.kuleuven.be/nl/over_kulak/faculteiten/geneeskunde            #
 #                                                                            #
-# 4 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
+# 6 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
 # d’Estienne d’Orves - 91120 - Palaiseau - FRANCE                            #
 #                                                                            #
 ##############################################################################
 
-
 import sys
-import numpy as np
+import io
+import platform
+import os
+import time
+import pickle
 import pandas as pd
+import numpy as np
 from sklearn.ensemble import RandomForestClassifier  
-from sklearn.metrics import average_precision_score
+import importlib
+import evaluation as eval
+importlib.reload(eval)
+import measures as ms
+importlib.reload(ms)
+
 
 if __name__ == '__main__':   
 
@@ -48,13 +63,26 @@ if __name__ == '__main__':
     test = pd.read_csv(sys.argv[3])  # conjunto de teste
     start = int(sys.argv[4])         # inicio do espaço de rótulos    
     directory = sys.argv[5]          # diretório para salvar as predições 
-    
+    fold = int(sys.argv[6])   
+
     # num_labels = 1
-    # train = pd.read_csv("/dev/shm/stand-GpositiveGO/Tested/Split-6/Group-3/GpositiveGO-split-tr-6-group-3.csv")
-    # valid = pd.read_csv("/dev/shm/stand-GpositiveGO/Tested/Split-6/Group-3/GpositiveGO-split-vl-6-group-3.csv")
-    # test = pd.read_csv("/dev/shm/stand-GpositiveGO/Tested/Split-6/Group-3/GpositiveGO-split-ts-6-group-3.csv")
-    # start = 912
-    # directory = "/dev/shm/stand-GpositiveGO/Tested/Split-6/Group-3"
+    #train = pd.read_csv("/tmp/d-emotions/Tested/Split-1/Group-1/emotions-split-tr-1-group-1.csv")
+    #valid = pd.read_csv("/tmp/d-emotions/Tested/Split-1/Group-1/emotions-split-vl-1-group-1.csv")
+    #test = pd.read_csv("/tmp/d-emotions/Tested/Split-1/Group-1/emotions-split-ts-1-group-1.csv")
+    #start = 72
+    #directory = "/tmp/d-emotions/Tested/Split-1/Group-1/"
+
+
+    #print("\n\n%==============================================%")
+    #print("MULTI-LABEL ")
+    #print("train: ", sys.argv[1])
+    #print("valid: ", sys.argv[2])
+    #print("test: ", sys.argv[3])
+    #print("label start: ", sys.argv[4])
+    #print("directory: ", sys.argv[5])
+    #print("fold: ", sys.argv[6])
+    #print("%==============================================%\n\n")
+    
     
     # juntando treino com validação
     train = pd.concat([train,valid],axis=0).reset_index(drop=True)
@@ -79,28 +107,38 @@ if __name__ == '__main__':
     true = (directory + "/y_true.csv")     
     pred = (directory + "/y_pred_bin.csv") 
     proba = (directory + "/y_pred_proba.csv")  
+    proba_original = (directory + "/proba_original.csv")  
     
     # parametros do classificador base
-    random_state = 0    
+    random_state = 1234
     n_estimators = 200
     
     # inicializa o classificador base
     rf = RandomForestClassifier(n_estimators = n_estimators, random_state = random_state)
     
     # treino
+    start_time_train = time.time()
     rf.fit(X_train, Y_train)
+    end_time_train = time.time()
+    train_duration = end_time_train - start_time_train
 
     # predições binárias
+    start_time_test_bin = time.time()
     y_pred_bin = pd.DataFrame(rf.predict(X_test))
+    end_time_test_bin = time.time()
+    test_duration_bin = end_time_test_bin - start_time_test_bin
+
     y_pred_bin.columns = labels_y_test
     y_pred_bin.to_csv(pred, index=False)
-    
-    # 
+
     Y_test.to_csv(true, index=False)
 
     # predições probabilísticas
+    start_time_test_proba = time.time()
     probabilities = rf.predict_proba(X_test)
-    
+    end_time_test_proba = time.time()
+    test_duration_proba = end_time_test_proba - start_time_test_proba
+
     ldf1 = []
     for n in range(0, len(probabilities)):
       # print(" ", n)
@@ -110,32 +148,31 @@ if __name__ == '__main__':
       ldf1.append(res1)
     
     final = pd.concat(ldf1, axis=1)
-    final.to_csv(proba, index=False)
-    
-    
-    # construindo a tabela com as predições probabilisticas
-    # para salvar num formato de dataframe que pode ser usado no R
-    # ldf = []
-    # ldf2 = []
-    # for n in range(0, len(probabilities)):
-    #   # print(" ", n)
-    # 
-    #   try:
-    #     res = probabilities[n]
-    #     res1 = pd.DataFrame(res)
-    # 
-    #     if res.shape[1] == 1:
-    #       res.columns = [f'prob_{n}_0']
-    #       res[f'prob_{n}_1'] = 0
-    #     else:
-    #       res.columns = [f'prob_{n}_0', f'prob_{n}_1']
-    # 
-    #     ldf.append(res)
-    #     res2 = res.iloc[:, :1]
-    #     ldf2.append(res2)
-    #   except Exception as e:
-    #     print(e)
-    #     print(probabilities)
-    #     print(res)
-    
-    
+    final.to_csv(proba_original, index=False)
+
+    proba_1 = final.filter(regex=r'^prob_\d+_1$')
+    proba_1.columns = labels_y_train
+    proba_1.to_csv(proba, index=False)
+
+    times_df = pd.DataFrame({
+        'train_duration': [train_duration],
+        'test_duration_proba': [test_duration_proba],
+        'test_duration_bin': [test_duration_bin]
+    })
+    times_path = os.path.join(directory, "runtime-python.csv")
+    times_df.to_csv(times_path, index=False)
+
+    # =========== SAVE MEASURES ===========   
+    res_curves = eval.multilabel_curve_metrics(Y_test, proba_1)    
+    name = (directory + "/results-python.csv") 
+    res_curves.to_csv(name, index=False)    
+ 
+
+    # =========== SAVE MODEL SIZE EM BYTES ===========
+    model_buffer = io.BytesIO()
+    pickle.dump(rf, model_buffer)
+    model_size_bytes = model_buffer.tell()
+    model_size_df = pd.DataFrame({
+        'model_size_bytes': [model_size_bytes]
+    })
+    model_size_df.to_csv(os.path.join(directory, "model-size.csv"), index=False)

@@ -1,6 +1,6 @@
-cat("\n\n##########################################################")
-cat("\n# RSCRIPT: START EXECUTE STANDARD HPML                     #")
-cat("\n###########################################################\n\n")
+cat("\n##########################################################")
+cat("\n# RSCRIPT: START EXECUTE STANDARD HPML                   #")
+cat("\n##########################################################\n\n")
 
 
 # clean
@@ -8,8 +8,8 @@ rm(list=ls())
 
 
 ##############################################################################
-# STANDARD HPML                                                              #
-# Copyright (C) 2023                                                         #
+# STANDARD HYBRID PARTITIONS FOR MULTI-LABEL CLASSIFICATION                  #
+# Copyright (C) 2025                                                         #
 #                                                                            #
 # This code is free software: you can redistribute it and/or modify it under #
 # the terms of the GNU General Public License as published by the Free       #
@@ -19,25 +19,31 @@ rm(list=ls())
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General   #
 # Public License for more details.                                           #
 #                                                                            #
-# 1 - PhD Elaine Cecilia Gatto | Prof PhD Ricardo Cerri                      #
-# 2 - Prof PhD Mauri Ferrandin                                               #
-# 3 - Prof PhD Celine Vens | PhD Felipe Nakano Kenji                         #
-# 4 - Prof PhD Jesse Read                                                    #
+# 1 - Prof Elaine Cecilia Gatto                                              #
+# 2 - Prof PhD Ricardo Cerri                                                 #
+# 3 - Prof PhD Mauri Ferrandin                                               #
+# 4 - Prof PhD Celine Vens                                                   #
+# 5 - PhD Felipe Nakano Kenji                                                #
+# 6 - Prof PhD Jesse Read                                                    #
 #                                                                            #
 # 1 = Federal University of São Carlos - UFSCar - https://www2.ufscar.br     #
 # Campus São Carlos | Computer Department - DC - https://site.dc.ufscar.br | #
 # Post Graduate Program in Computer Science - PPGCC                          # 
 # http://ppgcc.dc.ufscar.br | Bioinformatics and Machine Learning Group      #
 # BIOMAL - http://www.biomal.ufscar.br                                       # 
-#                                                                            #
-# 2 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
+#                                                                            # 
+# 1 = Federal University of Lavras - UFLA                                    #
+#                                                                            # 
+# 2 = State University of São Paulo - USP                                    #
+#                                                                            # 
+# 3 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
 # https://ufsc.br/                                                           #
 #                                                                            #
-# 3 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium           #
+# 4 and 5 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium     #
 # Medicine Department - https://kulak.kuleuven.be/                           #
 # https://kulak.kuleuven.be/nl/over_kulak/faculteiten/geneeskunde            #
 #                                                                            #
-# 4 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
+# 6 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
 # d’Estienne d’Orves - 91120 - Palaiseau - FRANCE                            #
 #                                                                            #
 ##############################################################################
@@ -45,20 +51,12 @@ rm(list=ls())
 
 cat("\n################################")
 cat("\n# Set Work Space               #")
-cat("\n###############################\n\n")
-FolderRoot = "~/Standard-HPML"
-FolderScripts = "~/Standard-HPML/R"
+cat("\n################################\n\n")
+library(here)
+library(stringr)
+FolderRoot <- here::here()
+setwd(FolderRoot)
 
-
-cat("\n########################################")
-cat("\n# Loading R Sources                    #")
-cat("\n########################################\n\n")
-
-setwd(FolderScripts)
-source("libraries.R")
-
-setwd(FolderScripts)
-source("utils.R")
 
 
 cat("\n########################################")
@@ -69,10 +67,9 @@ options(show.error.messages = TRUE)   # ERROR MESSAGES
 options(scipen=20)                    # number of places after the comma
 
 
-cat("\n########################################")
-cat("\n# Creating parameters list              #")
-cat("\n########################################\n\n")
+########################################
 parameters = list()
+########################################
 
 
 cat("\n########################################")
@@ -88,13 +85,12 @@ cat("\n# GET ARGUMENTS FROM COMMAND LINE   #")
 cat("\n#####################################\n\n")
 args <- commandArgs(TRUE)
 
-
-# config_file = "/home/biomal/Standard-HPML/config-files-laptop/rf/jaccard/ward.D2/silho/stand-GpositiveGO.csv"
-
 config_file <- args[1]
 
 
-parameters$Config.File.Name = config_file
+# config_file = "~/HPML.D/config-files/d-emotions.csv"
+
+
 if(file.exists(config_file)==FALSE){
   cat("\n################################################################")
   cat("#\n Missing Config File! Verify the following path:              #")
@@ -108,55 +104,68 @@ if(file.exists(config_file)==FALSE){
 }
 
 
+
 cat("\n########################################")
 cat("\n# Config File                          #\n")
 config = data.frame(read.csv(config_file))
 print(config)
 cat("\n########################################\n\n")
 
-dataset_path = toString(config$Value[1])
+
+FolderScripts = toString(config$Value[1])
+FolderScripts = str_remove(FolderScripts, pattern = " ")
+parameters$Config$FolderScripts = FolderScripts
+
+dataset_path = toString(config$Value[2])
 dataset_path = str_remove(dataset_path, pattern = " ")
 parameters$Config$Dataset.Path = dataset_path
 
-folderResults = toString(config$Value[2])
+folderResults = toString(config$Value[3])
 folderResults = str_remove(folderResults, pattern = " ")
 parameters$Config$Folder.Results = folderResults
 
-Partitions_Path = toString(config$Value[3])
+Partitions_Path = toString(config$Value[4])
 Partitions_Path = str_remove(Partitions_Path, pattern = " ")
 parameters$Config$Partitions.Path = Partitions_Path
 
-Implementation = toString(config$Value[4])
+Implementation = toString(config$Value[5])
 Implementation = str_remove(Implementation, pattern = " ")
 parameters$Config$Implementation = Implementation
 
-similarity = toString(config$Value[5])
+similarity = toString(config$Value[6])
 similarity = str_remove(similarity, pattern = " ")
 parameters$Config$Similarity = similarity
 
-dendrogram = toString(config$Value[6])
+dendrogram = toString(config$Value[7])
 dendrogram = str_remove(dendrogram, pattern = " ")
 parameters$Config$Dendrogram = dendrogram
 
-criteria = toString(config$Value[7])
+criteria = toString(config$Value[8])
 criteria = str_remove(criteria, pattern = " ")
 parameters$Config$Criteria = criteria 
 
-dataset_name = toString(config$Value[8])
+dataset_name = toString(config$Value[9])
 dataset_name = str_remove(dataset_name, pattern = " ")
 parameters$Config$Dataset.Name = dataset_name
 
-number_dataset = as.numeric(config$Value[9])
+number_dataset = as.numeric(config$Value[10])
 parameters$Config$Number.Dataset = number_dataset
 
-number_folds = as.numeric(config$Value[10])
+number_folds = as.numeric(config$Value[11])
 parameters$Config$Number.Folds = number_folds
 
-number_cores = as.numeric(config$Value[11])
+number_cores = as.numeric(config$Value[12])
 parameters$Config$Number.Cores = number_cores
 
 ds = datasets[number_dataset,]
 parameters$DatasetInfo = ds
+
+
+cat("\n########################################")
+cat("\n# Loading R Sources                    #")
+cat("\n########################################\n\n")
+source(file.path(parameters$Config$FolderScript, "libraries.R"))
+source(file.path(parameters$Config$FolderScript, "utils.R"))
 
 
 cat("\n########################################")
@@ -320,64 +329,40 @@ if(parameters$Config$Implementation =="clus"){
   
   cat("\n\nRUNNING Random Forests\n")  
   
-  setwd(FolderScripts)
-  source("run-rf.R")
+  source(file.path(parameters$Config$FolderScript, "run-rf.R"))
   
   timeFinal <- system.time(results <- execute.run.rf(parameters))
   result_set <- t(data.matrix(timeFinal))
   setwd(parameters$Directories$folderTested)
   write.csv(result_set, "Final-Runtime.csv")
   
-  # x.minutos = (1 * as.numeric(result_set[3]))/60
-  # write(x.minutos, "minutos.txt")
-  
-  
   print(system(paste("rm -r ", parameters$Directories$folderDatasets, sep="")))
   print(system(paste("rm -r ", parameters$Directories$folderPartitions, sep="")))
   
-  
-  
-  cat("\n\n###################################################################")
-  cat("\n# ECC: COMPRESS RESULTS                                      #")
-  cat("\n#####################################################################\n\n")
-  str3 = paste("tar -zcvf ", parameters$Directories$folderTested , "/",
-               parameters$DatasetInfo$Name, "-results-stand.tar.gz ",
-               parameters$Directories$folderTested, sep="")
+  cat("\n#####################################################")
+  cat("\n# COMPRESS RESULTS                                  #")
+  cat("\n#####################################################\n\n")
+  str3 <- paste0(
+    "tar -zcvf ", parameters$Directories$folderResults, "/",
+    parameters$DatasetInfo$Name, "-results-stand.tar.gz ",
+    "-C ", parameters$Directories$folderTested, " ."
+  )
   print(system(str3))
   
+  cat("\n######################################################")
+  cat("\n# COPY TO HOME                                       #")
+  cat("\n#####################################################\n\n")
   
-  cat("\n\n###################################################################")
-  cat("\n# ====> GPC: COPY TO HOME                                     #")
-  cat("\n#####################################################################\n\n")
-  
-  str0 = "~/Standard-HPML/Reports/"
+  str0 = paste0(FolderRoot, "/Reports")
   if(dir.exists(str0)==FALSE){dir.create(str0)}
   
-  str3 = paste(parameters$Directories$folderTested, "/",
-               parameters$DatasetInfo$Name, "-results-stand.tar.gz", sep="")
+  str3 = paste(parameters$Directories$folderResults , "/",
+               parameters$DatasetInfo$Name, 
+               "-results-stand.tar.gz", sep="")
   
   str4 = paste("cp ", str3, " ", str0, sep="")
   print(system(str4))
-  
-  
-  cat("\n\nCOPY TO GOOGLE DRIVE")
-  origem = parameters$Directories$folderTested
-  destino = paste("nuvem:Standard-HPML/",
-                  parameters$Config$Implementation, "/", 
-                  parameters$Config$Similarity, "/", 
-                  parameters$Config$Dendrogram, "/", 
-                  parameters$Config$Criteria, "/", 
-                  parameters$Config$Dataset.Name, sep="")
-  comando1 = paste("rclone -P copy ", origem, " ", destino, sep="")
-  cat("\n", comando1, "\n")
-  a = print(system(comando1))
-  a = as.numeric(a)
-  if(a != 0) {
-    stop("Erro RCLONE")
-    quit("yes")
-  }
-  
-  
+ 
   
 } else if(parameters$Config$Implementation=="mulan"){
   

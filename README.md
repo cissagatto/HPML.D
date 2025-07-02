@@ -4,26 +4,46 @@ This code is part of my PhD research at PPG-CC/DC/UFSCar in colaboration with Ka
 # FLOW DESIGN
 
 
-## How to cite 
-@misc{Gatto2023, author = {Gatto, E. C.}, title = {Standard Version of Hybrid Partitions for Multi-Label Classification}, year = {2023}, publisher = {GitHub}, journal = {GitHub repository}, howpublished = {\url{https://github.com/cissagatto/Standard-HPML}}}
+## How to Cite 📑
+If you use this code in your research, please cite the following:
 
-## Source Code
-This code source is composed of the project R to be used in RStudio IDE and also the following scripts R:
+```bibtex
+@misc{Gatto2025,
+  author = {Gatto, E. C.},
+  title = {HPML standard},
+  year = {2025},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/cissagatto/HPML.D}}
+}
+```
 
-01. libraries.R
-02. utils.R
-03. misc.R
-04. test-clus-maf1.R
-05. test-clus-mif1.R
-06. test-clus-silho.R
-07. test-rf-maf1.R (not implemented)
-08. test-rf-mif1.R (not implemented)
-09. test-rf-silho.R
-10. run-clus.R
-11. run-rf.R
-12. start.R
-13. jobs.R
-14. config-files.R
+## 🗂️ Project Structure
+
+The codebase includes R and Python scripts that must be used together.
+
+### R Scripts (in `/R` folder):
+
+* `config-files.R`
+* `libraries.R`
+* `run-clus.R`
+* `run-rf.R`
+* `standard.R`
+* `test-clus-maf1.R`
+* `test-clus-mif1.R`
+* `test-clus-silho.R`
+* `test-rf-silho.R`
+* `utils.R`
+
+
+### Python Scripts (in `/Python` folder):
+
+* `confusion_matrix.py`
+* `curves.py`
+* `evaluation.py`
+* `measures.py`
+* `standard_multilabel.py`
+* `standard_single.py`
 
 
 ## Preparing your experiment
@@ -65,9 +85,10 @@ A file called _datasets-original.csv_ must be in the *root project directory*. T
 2 - [Click here](https://link.springer.com/book/10.1007/978-3-319-41111-8) to get explanation about each property.
 
 
+### STEP 2: Cross-Validation Files
+The experiment requires pre-processed cross-validation files in `.tar.gz` format. You can download the 10-fold files for multilabel datasets [here](https://1drv.ms/u/s!Aq6SGcf6js1mrZJSkZ3VEJ217rEd5A?e=IH73m3).
 
-### STEP 2
-To run this experiment you need the _X-Fold Cross-Validation_ files and they must be compacted in **tar.gz** format. You can download these files, with 10-folds, ready for multilabel dataset by clicking [here](https://www.4shared.com/directory/ypgzwzjq/datasets-cross-validation.html). For a new dataset, in addition to including it in the **datasets-original.csv** file, you must also run this code [here](https://github.com/cissagatto/crossvalidationmultilabel). In the repository in question you will find all the instructions needed to generate the files in the format required for this experiment. The **tar.gz** file can be placed on any directory on your computer or server. The absolute path of the file should be passed as a parameter in the configuration file that will be read by **start.R** script. The dataset folds will be loaded from there.
+For new datasets, you can generate these files by following the instructions in [this repository](https://github.com/cissagatto/crossvalidationmultilabel). After generating the files, place the `.tar.gz` archive in any directory, and provide the absolute path in the configuration file for the `global.R` script.
 
 
 
@@ -87,10 +108,11 @@ You must use here the results generated from the *OUTPUT* directory in that sour
 
 
 
+
 ### STEP 4
 You need to have installed all the Java, Python and R packages required to execute this code on your machine or server. This code does not provide any type of automatic package installation!
 
-You can use the [Conda Environment](https://1drv.ms/u/s!Aq6SGcf6js1mw4hbhU9Raqarl8bH8Q?e=IA2aQs) that I created to perform this experiment. Try to use the command below to extract the environment to your computer:
+You can use the [Conda Environment](https://1drv.ms/u/s!Aq6SGcf6js1mw4hbhU9Raqarl8bH8Q?e=IA2aQs) that I created to perform this experiment. Below are the links to download the files. Try to use the command below to extract the environment to your computer:
 
 ```
 conda env create -file AmbienteTeste.yaml
@@ -101,13 +123,12 @@ See more information about Conda environments [here](https://docs.conda.io/proje
 You can also run this code using the AppTainer [container](https://1drv.ms/u/s!Aq6SGcf6js1mw4hcVuz_IN8_Bh1oFQ?e=5NuyxX) that I'm using to run this code in a SLURM cluster. Please, check this [tutorial](https://rpubs.com/cissagatto/apptainer-slurm-r) (in portuguese) to see how to do that. 
 
 
-
-
 ### STEP 5
 To run this code you will need a configuration file saved in *csv* format and with the following information:
 
 | Config          | Value                                                                         | 
 |-----------------|-------------------------------------------------------------------------------| 
+| FolderScripts   | Absolute path to the R folder scripts                                         |
 | Dataset_Path    | Absolute path to the directory where the dataset's tar.gz is stored           |
 | Temporary_Path  | Absolute path to the directory where temporary processing will be performed*  |
 | Partitions_Path | Absolute path to the directory where the best partitions are                  |
@@ -128,57 +149,56 @@ To run this code you will need a configuration file saved in *csv* format and wi
 You can save configuration files wherever you want. The absolute path will be passed as a command line argument.
 
 
-## Software Requirements
 
-This code was develop in RStudio Version 2022.07.2+576 "Spotted Wakerobin" Release (e7373ef832b49b2a9b88162cfe7eac5f22c40b34, 2022-09-06) for Ubuntu Bionic Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.12.8 Chrome/69.0.3497.128 Safari/537.36 
+## 🛠️ Software Requirements
+This code was develop in RStudio 2024.12.0+467 "Kousa Dogwood" Release (cf37a3e5488c937207f992226d255be71f5e3f41, 2024-12-11) for Ubuntu Jammy Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) rstudio/2024.12.0+467 Chrome/126.0.6478.234 Electron/31.7.6 Safari/537.36, Quarto 1.5.57
 
-## Hardware Requirements
-This code may or may not be executed in parallel, however, it is highly recommended that you run it in parallel. The number of cores can be configured via the command line (number_cores). If number_cores = 1 the code will run sequentially. In our experiments, we used 10 cores. For reproducibility, we recommend that you also use ten cores. This code was tested with the birds dataset in the following machine:
+- R version 4.5.0 (2025-04-11) -- "How About a Twenty-Six", Copyright (C) 2025 The R Foundation for Statistical Computing, Platform: x86_64-pc-linux-gnu
+- Python 3.10
+- Conda 24.11.3
 
-*System:*
+## 💻 Hardware Recommendations
+This code may or may not be executed in parallel, however, it is highly recommended that you run it in parallel. The number of cores can be configured via the command line (number_cores). If number_cores = 1 the code will run sequentially. In our experiments, we used 10 cores. For reproducibility, we recommend that you also use ten cores. This code was tested with the emotions dataset in the following machine:
 
-Kernel: 5.4.0-136-generic x86_64 bits: 64 compiler: gcc v: 9.4.0. Desktop: Cinnamon 5.2.7 wm: muffin dm: LightDM. Distro: Linux Mint 20.3 Una. Base: Ubuntu 20.04 focal 
+- Linux 6.11.0-26-generic #26~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC x86_64 x86_64 x86_64 GNU/Linux
+- Distributor ID: Ubuntu, Description: Ubuntu 24.04.2 LTS, Release: 24.04, Codename: noble
+- Manufacturer: Acer, Product Name: Nitro ANV15-51, Version: V1.16, Wake-up Type: Power Switch, Family: Acer Nitro V 15
 
-*Machine:*
+Then the experiment was executed in a cluster at UFSC (Federal University of Santa Catarina Campus Blumenau).
 
-Type: Laptop System: LENOVO product: 82CG v: IdeaPad Gaming 3 15IMH05 serial: <filter> Chassis: type: 10 v: IdeaPad Gaming 3 15IMH05 serial: <filter> Mobo: LENOVO model: LNVNB161216 v: SDK0R33126 WIN serial: <filter> UEFI: LENOVO v: EGCN33WW date: 12/24/2020 
-
-*CPU:*
-
-Topology: 6-Core model: Intel Core i7-10750H bits: 64 type: MT MCP arch: N/A | L2 cache: 12.0 MiB | flags: avx avx2 lm nx pae sse sse2 sse3 sse4_1 sse4_2 ssse3 vmx bogomips: 62399 | Speed: 4287 MHz min/max: 800/5000 MHz Core speeds (MHz): 1: 4264 2: 4240 3: 4254 | 4: 4240 5: 4273 6: 4275 7: 4267 8: 4223 9: 4275 10: 4226 11: 4264 12:4282
-
-Then the experiment was executed in a cluster at UFSCar.
 
 
 ## Results
-The results stored in the _OUTPUT_ directory.
+The results are stored in the _REPORTS_ directory.
 
 ## RUN
-To run the code, open the terminal, enter the *~/Standard-HPML/R* directory, and type
+To run the code, open the terminal, enter the *~/HPML.DL/R* directory, and type
 
 ```
-Rscript tbhp.R [absolute_path_to_config_file]
+Rscript standard.R [absolute_path_to_config_file]
 ```
 
 Example:
 
 ```
-Rscript tbhp.R "~/Standard-HPML/config-files/rf/jaccard/ward.D2/silho/srf-GpositiveGO.csv"
+Rscript standard.R "~/HPML.D/config-files/d-GpositiveGO.csv"
 ```
 
 ## DOWNLOAD RESULTS
 
-- Generated Hybrid Partitions
-- Best Hybrid Partitions
-- Test 
+soon...
+
 
 ## Acknowledgment
 - This study was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES) - Finance Code 001.
 - This study was financed in part by the Conselho Nacional de Desenvolvimento Científico e Tecnológico - Brasil (CNPQ) - Process number 200371/2022-3.
 - The authors also thank the Brazilian research agencies FAPESP financial support.
 
-# Contact
-elainececiliagatto@gmail.com
+
+## 📞 Contact
+Elaine Cecília Gatto
+✉️ [elainececiliagatto@gmail.com](mailto:elainececiliagatto@gmail.com)
+
 
 ## Links
 

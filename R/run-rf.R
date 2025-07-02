@@ -1,6 +1,6 @@
 ##############################################################################
-# STANDARD HPML                                                              #
-# Copyright (C) 2023                                                         #
+# STANDARD HYBRID PARTITIONS FOR MULTI-LABEL CLASSIFICATION                  #
+# Copyright (C) 2025                                                         #
 #                                                                            #
 # This code is free software: you can redistribute it and/or modify it under #
 # the terms of the GNU General Public License as published by the Free       #
@@ -10,57 +10,56 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General   #
 # Public License for more details.                                           #
 #                                                                            #
-# 1 - PhD Elaine Cecilia Gatto | Prof PhD Ricardo Cerri                      #
-# 2 - Prof PhD Mauri Ferrandin                                               #
-# 3 - Prof PhD Celine Vens | PhD Felipe Nakano Kenji                         #
-# 4 - Prof PhD Jesse Read                                                    #
+# 1 - Prof Elaine Cecilia Gatto                                              #
+# 2 - Prof PhD Ricardo Cerri                                                 #
+# 3 - Prof PhD Mauri Ferrandin                                               #
+# 4 - Prof PhD Celine Vens                                                   #
+# 5 - PhD Felipe Nakano Kenji                                                #
+# 6 - Prof PhD Jesse Read                                                    #
 #                                                                            #
 # 1 = Federal University of São Carlos - UFSCar - https://www2.ufscar.br     #
 # Campus São Carlos | Computer Department - DC - https://site.dc.ufscar.br | #
 # Post Graduate Program in Computer Science - PPGCC                          # 
 # http://ppgcc.dc.ufscar.br | Bioinformatics and Machine Learning Group      #
 # BIOMAL - http://www.biomal.ufscar.br                                       # 
-#                                                                            #
-# 2 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
+#                                                                            # 
+# 1 = Federal University of Lavras - UFLA                                    #
+#                                                                            # 
+# 2 = State University of São Paulo - USP                                    #
+#                                                                            # 
+# 3 - Federal University of Santa Catarina Campus Blumenau - UFSC            #
 # https://ufsc.br/                                                           #
 #                                                                            #
-# 3 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium           #
+# 4 and 5 - Katholieke Universiteit Leuven Campus Kulak Kortrijk Belgium     #
 # Medicine Department - https://kulak.kuleuven.be/                           #
 # https://kulak.kuleuven.be/nl/over_kulak/faculteiten/geneeskunde            #
 #                                                                            #
-# 4 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
+# 6 - Ecole Polytechnique | Institut Polytechnique de Paris | 1 rue Honoré   #
 # d’Estienne d’Orves - 91120 - Palaiseau - FRANCE                            #
 #                                                                            #
 ##############################################################################
 
 
-##################################################
-# SET WORK SPACE
-##################################################
-FolderRoot = "~/Standard-HPML"
-FolderScripts = "~/Standard-HPML/R"
-
+# cat("\n################################")
+# cat("\n# Set Work Space               #")
+# cat("\n###############################\n\n")
+# library(here)
+# library(stringr)
+# FolderRoot <- here::here()
+# setwd(FolderRoot)
 
 ##############################################################################
 # 
 ##############################################################################
 execute.run.rf <- function(parameters){
   
-  FolderRoot = "~/Standard-HPML"
-  FolderScripts = "~/Standard-HPML/R"
-  
-  setwd(FolderScripts)
-  source("libraries.R")
-  
-  setwd(FolderScripts)
-  source("test-rf-silho.R")
-  
+
   if(parameters$Config$Number.Cores == 0){
     
-    cat("\n\n########################################################")
-      cat("\n# Zero is a disallowed value for number_cores. Please  #")
-      cat("\n# choose a value greater than or equal to 1.           #")
-      cat("\n########################################################\n\n")
+    cat("\n##########################################################")
+    cat("\n# Zero is a disallowed value for number_cores. Please    #")
+    cat("\n# choose a value greater than or equal to 1.             #")
+    cat("\n##########################################################\n\n")
     
   } else {
     
@@ -69,26 +68,28 @@ execute.run.rf <- function(parameters){
     print(cl)
     
     if(parameters$Config$Number.Cores==1){
-      cat("\n\n######################################################")
-        cat("\n# Running Sequentially!                              #")
-        cat("\n######################################################\n\n")
+      cat("\n######################################################")
+      cat("\n# Running Sequentially!                              #")
+      cat("\n######################################################\n\n")
     } else {
-      cat("\n\n#############################################################################")
-        cat("\n# Running in parallel with ", parameters$Config$Number.Cores, " cores! #")
-        cat("\n#############################################################################\n\n")
+      cat("\n#############################################################################")
+      cat("\n# Running in parallel with ", parameters$Config$Number.Cores, " cores! #")
+      cat("\n#############################################################################\n\n")
     }
   }
-  cl = cl
   
-  cat("\n\n#######################################################")
-    cat("\n# RUN RF: Get labels                                  #")
-    cat("\n#######################################################\n\n")
-  arquivo = paste(parameters$Directories$folderNamesLabels, "/" ,
-                  dataset_name, "-NamesLabels.csv", sep="")
-  namesLabels = data.frame(read.csv(arquivo))
-  colnames(namesLabels) = c("id", "labels")
-  namesLabels = c(namesLabels$labels)
-  parameters$Config$NamesLabels = namesLabels
+  retorno = list()
+  
+  cat("\n##################################################")
+  cat("\n# RUN: Names Labels                              #")
+  cat("\n##################################################\n\n")
+  # /tmp/stand-emotions/Datasets/emotions/NamesLabels
+  name.file = paste(parameters$Directories$folderNamesLabels, "/",
+                    parameters$Config$Dataset.Name,
+                    "-NamesLabels.csv", sep="")
+  labels.names = data.frame(read.csv(name.file))
+  names(labels.names) = c("Index", "Labels")
+  parameters$Names.Labels = labels.names
   
   
   cat("\n\n#######################################################")
@@ -179,6 +180,8 @@ execute.run.rf <- function(parameters){
     
     
   } else {
+    
+    source(file.path(parameters$Config$FolderScript, "test-rf-silho.R"))
     
     cat("\n\n#####################################################")
       cat("\n# RUN RF SILHOUETTE: Build and Test Partitions      #")
