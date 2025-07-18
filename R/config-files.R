@@ -149,10 +149,10 @@ while(p<=length(Implementation.1)){
           write("Config, Value",
                 file = output.file, append = TRUE)
           
-          write("FolderScripts, ~/HPML.D/R", 
+          write("FolderScripts, /lapix/arquivos/elaine/HPML.D/R", 
                 file = output.file, append = TRUE)
           
-          write("Dataset_Path, ~/HPML.D/Datasets", 
+          write("Dataset_Path, /lapix/arquivos/elaine/HPML.D/Datasets", 
                 file = output.file, append = TRUE)
           
           folder.name = paste("/tmp/", name, sep = "")
@@ -160,7 +160,7 @@ while(p<=length(Implementation.1)){
           str1 = paste("Temporary_Path, ", folder.name, sep="")
           write(str1, file = output.file, append = TRUE)
           
-          str.2 = paste("Partitions_Path, ~/HPML.D/Best-Partitions/", sep="")
+          str.2 = paste("Partitions_Path, /lapix/arquivos/elaine/HPML.D/Best-Partitions/", sep="")
           write(str.2, file = output.file, append = TRUE)
           
           str0 = paste("Implementation, ", Implementation.1[p], sep="")
@@ -183,7 +183,7 @@ while(p<=length(Implementation.1)){
           
           write("Number_Folds, 10", file = output.file, append = TRUE)
           
-          write("Number_Cores, 1", file = output.file, append = TRUE)
+          write("Number_Cores, 10", file = output.file, append = TRUE)
           
           close(output.file)
           
