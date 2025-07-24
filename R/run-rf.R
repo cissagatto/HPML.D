@@ -190,7 +190,7 @@ execute.run.rf <- function(parameters){
     
     
     cat("\n\n######################################################")
-      cat("\n# RUN RF SILHOUETTE: Matrix Confusion                #")
+      cat("\n# RUN RF SILHOUETTE: Gather info                     #")
       cat("\n######################################################\n\n")
     timePreds = system.time(resGather <- gather.preds.rf.silho(parameters))
     

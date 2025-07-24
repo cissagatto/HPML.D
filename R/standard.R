@@ -88,7 +88,7 @@ args <- commandArgs(TRUE)
 config_file <- args[1]
 
 
-# config_file = "~/HPML.D/config-files/d-emotions.csv"
+# config_file = "~/HPML.D/config-files/d-Yelp-1.csv"
 
 
 if(file.exists(config_file)==FALSE){
@@ -181,7 +181,6 @@ diretorios <- directories(parameters)
 parameters$Directories = diretorios
 
 
-cat("\n\nChecking the dataset tar.gz file")
 str00 = paste(dataset_path, "/", ds$Name,".tar.gz", sep = "")
 str00 = str_remove(str00, pattern = " ")
 
@@ -229,7 +228,6 @@ if(file.exists(str00)==FALSE){
 }
 
 
-cat("\n\nChecking the BEST HYBRID PARTITIONS tar.gz file")
 str00 = paste(Partitions_Path, "/", ds$Name,".tar.gz", sep = "")
 str00 = str_remove(str00, pattern = " ")
 

@@ -55,9 +55,10 @@ setwd(FolderRoot)
 #
 #########################################################################
 build.rf.silho <- function(parameters) {
+  
   # f = 1
   bthpkParalel <- foreach(f = 1:parameters$Config$Number.Folds) %dopar% {
-    # while(f<=parameters$Config$Number.Folds){
+  # while(f<=parameters$Config$Number.Folds){
     
     cat("\n##########################################################")
     cat("\n# Load R Sources                                         #")
@@ -275,7 +276,7 @@ build.rf.silho <- function(parameters) {
         
         # EXECUTA
         start <- proc.time()
-        res = print(system(str.execute))
+        res = system(str.execute)
         tempo = data.matrix((proc.time() - start))
         tempo = data.frame(t(tempo))
         write.csv(tempo,
@@ -339,7 +340,7 @@ build.rf.silho <- function(parameters) {
         
         # EXECUTA
         start <- proc.time()
-        res = print(system(str.execute))
+        res = system(str.execute)
         tempo = data.matrix((proc.time() - start))
         tempo = data.frame(t(tempo))
         write.csv(tempo,
@@ -376,9 +377,10 @@ build.rf.silho <- function(parameters) {
 #
 ######################################################################
 gather.preds.rf.silho <- function(parameters) {
+  
   # f = 1
   gatherR <- foreach(f = 1:parameters$Config$Number.Folds) %dopar% {
-    # while(f<=parameters$Config$Number.Folds){
+  # while(f<=parameters$Config$Number.Folds){
     
     cat("\n##########################################################")
     cat("\n# Load R Sources                                         #")
@@ -501,8 +503,7 @@ gather.preds.rf.silho <- function(parameters) {
       fold = 0,
       cluster = 0,
       train_duration = 0,
-      test_duration_proba = 0,
-      test_duration_bin = 0
+      test_duration_proba = 0
     )
     
     f.metrics = data.frame()
@@ -683,22 +684,22 @@ gather.preds.rf.silho <- function(parameters) {
       name.proba = paste0(Folder.Group.Test, "/y_pred_proba.csv")
       y_proba = data.frame(read.csv(name.proba))
       f.proba = data.frame(f.proba, y_proba)
-      print(system(paste0("rm -r ", name.proba)))
+      #print(system(paste0("rm -r ", name.proba)))
       cat("\n")
       
       cat("\ntrue")
       name.true = paste0(Folder.Group.Test, "/y_true.csv")
       y_true = data.frame(read.csv(name.true))
       f.true = data.frame(f.true, y_true)
-      print(system(paste0("rm -r ", name.true)))
+      #print(system(paste0("rm -r ", name.true)))
       cat("\n")
       
-      cat("\nbin")
-      name.bin = paste0(Folder.Group.Test, "/y_pred_bin.csv")
-      y_bin = data.frame(read.csv(name.bin))
-      f.bin = data.frame(f.bin, y_bin)
-      print(system(paste0("rm -r ", name.bin)))
-      cat("\n")
+      #cat("\nbin")
+      #name.bin = paste0(Folder.Group.Test, "/y_pred_bin.csv")
+      #y_bin = data.frame(read.csv(name.bin))
+      #f.bin = data.frame(f.bin, y_bin)
+      #print(system(paste0("rm -r ", name.bin)))
+      #cat("\n")
       
       g = g + 1
       gc()
@@ -744,14 +745,13 @@ gather.preds.rf.silho <- function(parameters) {
     f.true = f.true[, -1]
     write.csv(f.true, nome.true, row.names = FALSE)
     
-    nome.pred.proba = paste(Folder.Split.Test, "/y_pred_proba.csv", sep =
-                              "")
+    nome.pred.proba = paste(Folder.Split.Test, "/y_pred_proba.csv", sep ="")
     f.proba = f.proba[, -1]
     write.csv(f.proba, nome.pred.proba, row.names = FALSE)
     
-    nome.pred.bin = paste(Folder.Split.Test, "/y_pred_bin.csv", sep = "")
-    f.bin = f.bin[, -1]
-    write.csv(f.bin, nome.pred.bin, row.names = FALSE)
+    #nome.pred.bin = paste(Folder.Split.Test, "/y_pred_bin.csv", sep = "")
+    #f.bin = f.bin[, -1]
+    #write.csv(f.bin, nome.pred.bin, row.names = FALSE)
     
     # f = f + 1
     gc()
@@ -773,7 +773,7 @@ evaluate.rf.silho <- function(parameters) {
   
   # f = 1
   avaliaParalel <- foreach (f = 1:parameters$Config$Number.Folds) %dopar% {
-    # while(f<=parameters$Config$Number.Folds){
+  # while(f<=parameters$Config$Number.Folds){
     
     cat("\n##########################################################")
     cat("\n# Load R Sources                                         #")
@@ -787,10 +787,10 @@ evaluate.rf.silho <- function(parameters) {
     nome.true = paste(Folder.Split.Test, "/y_true.csv", sep = "")
     nome.pred.proba = paste(Folder.Split.Test, "/y_pred_proba.csv", sep =
                               "")
-    nome.pred.bin = paste(Folder.Split.Test, "/y_pred_bin.csv", sep = "")
+    # nome.pred.bin = paste(Folder.Split.Test, "/y_pred_bin.csv", sep = "")
     
     y_pred_proba = data.frame(read.csv(nome.pred.proba))
-    y_pred_bin = data.frame(read.csv(nome.pred.bin))
+    # y_pred_bin = data.frame(read.csv(nome.pred.bin))
     y_true = data.frame(read.csv(nome.true))
     
     
@@ -847,11 +847,19 @@ evaluate.rf.silho <- function(parameters) {
     y.true.3 = mldr_from_dataframe(y.true.2,
                                    labelIndices = seq(1, ncol(y.true.2)),
                                    name = "y.true.2")
-    y_pred_bin = sapply(y_pred_bin, function(x)
-      as.numeric(as.character(x)))
+    #y_pred_bin = sapply(y_pred_bin, function(x)
+    #  as.numeric(as.character(x)))
     y_pred_proba = sapply(y_pred_proba, function(x)
       as.numeric(as.character(x)))
     
+    ########################################################################
+    y_threshold_05 <- data.frame(as.matrix(fixed_threshold(y_pred_proba,
+                                                           threshold = 0.5)))
+    write.csv(y_threshold_05, 
+              paste(Folder.Split.Test, "/y_pred_thr05.csv", sep=""),
+              row.names = FALSE)
+    
+    ########################################################################
     y_threshold_card = lcard_threshold(as.matrix(y_pred_proba),
                                        mldr.tv$measures$cardinality,
                                        probability = F)
@@ -865,7 +873,7 @@ evaluate.rf.silho <- function(parameters) {
     #########################################################################
     matrix.confusao(
       true = y_true,
-      pred = y_pred_bin,
+      pred = y_threshold_05,
       type = "bin",
       salva = Folder.Split.Test,
       nomes.rotulos = parameters$Names.Labels$Labels
@@ -920,7 +928,7 @@ evaluate.rf.silho <- function(parameters) {
     all = rbind(data.python, data.utiml)
     write.csv(all, name, row.names = FALSE)
     
-    # f = f + 1
+    #  f = f + 1
     gc()
   }
   
@@ -1014,8 +1022,8 @@ gather.eval.rf.silho <- function(parameters) {
     fold = 0,
     cluster = 0,
     train_duration = 0,
-    test_duration_proba = 0,
-    test_duration_bin = 0
+    test_duration_proba = 0
+    #test_duration_bin = 0
   )
   
   f.metrics = data.frame(apagar=c(0))
@@ -1035,50 +1043,50 @@ gather.eval.rf.silho <- function(parameters) {
     name.ld = paste0(folderSplit, "/dependency.csv")
     data.ld = data.frame(read.csv(name.ld))
     f.dependency = rbind(f.dependency, data.ld)
-    system(paste0("rm -r ", name.ld))
+    #system(paste0("rm -r ", name.ld))
     
     name.if = paste0(folderSplit, "/info.csv")
     data.if = data.frame(read.csv(name.if))
     f.info = rbind(f.info, cbind(fold = f, data.if))
-    system(paste0("rm -r ", name.if))
+    #system(paste0("rm -r ", name.if))
     
     name.ls = paste0(folderSplit, "/labelsets.csv")
     data.ls = data.frame(read.csv(name.ls))
     f.labelsets = rbind(f.labelsets, data.ls)
-    system(paste0("rm -r ", name.ls))
+    #system(paste0("rm -r ", name.ls))
     
     name.ms = paste0(folderSplit, "/model-size.csv")
     data.ms = data.frame(read.csv(name.ms))
     f.model.size = rbind(f.model.size, data.ms)
-    system(paste0("rm -r ", name.ms))
+    #system(paste0("rm -r ", name.ms))
     
     name.mt = paste0(folderSplit, "/performance.csv")
     data.mt = data.frame(read.csv(name.mt))
     colnames(data.mt)[1] = c("Measures")
     f.metrics = cbind(f.metrics, data.mt)
-    system(paste0("rm -r ", name.mt))
+    #system(paste0("rm -r ", name.mt))
     
     name.pn = paste0(folderSplit, "/pos-neg.csv")
     data.pn = data.frame(read.csv(name.pn))
     f.pos.neg = rbind(f.pos.neg, data.pn)
-    system(paste0("rm -r ", name.pn))
+    #system(paste0("rm -r ", name.pn))
     
     name.pr = paste0(folderSplit, "/properties.csv")
     data.pr = data.frame(read.csv(name.pr))
     f.properties = rbind(f.properties, data.pr)
-    system(paste0("rm -r ", name.pr))
+    #system(paste0("rm -r ", name.pr))
     
     name.rt = paste0(folderSplit, "/runtime.csv")
     data.rt = data.frame(read.csv(name.rt))
     data.rt = data.frame(fold = f, data.rt)
     f.runtime = rbind(f.runtime, data.rt)
-    system(paste0("rm -r ", name.rt))
+    #system(paste0("rm -r ", name.rt))
     
     name.rtp = paste0(folderSplit, "/runtime-python.csv")
     data.rtp = data.frame(read.csv(name.rtp))
     data.rtp = data.frame(fold = f, data.rtp)
     f.runtime.python = rbind(f.runtime.python, data.rtp)
-    system(paste0("rm -r ", name.rtp))
+    #system(paste0("rm -r ", name.rtp))
     
     f = f + 1
     gc()

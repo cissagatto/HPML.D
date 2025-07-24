@@ -43,10 +43,10 @@
 # cat("\n################################")
 # cat("\n# Set Work Space               #")
 # cat("\n###############################\n\n")
-# library(here)
-# library(stringr)
-# FolderRoot <- here::here()
-# setwd(FolderRoot)
+library(here)
+library(stringr)
+FolderRoot <- here::here()
+setwd(FolderRoot)
 
 
 #########################################################################

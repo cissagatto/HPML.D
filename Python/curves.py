@@ -48,12 +48,18 @@ import time
 import pickle
 import pandas as pd
 import numpy as np
+
 import importlib
 import evaluation as eval
 importlib.reload(eval)
 import measures as ms
 importlib.reload(ms)
 
+from collections import Counter
+from sklearn.utils.multiclass import type_of_target
+
+import warnings
+from sklearn.exceptions import UndefinedMetricWarning
 
 
 if __name__ == '__main__':   
@@ -109,7 +115,11 @@ if __name__ == '__main__':
     y_true = pd.read_csv(true)
     y_proba = pd.read_csv(proba)
     
-    res_curves = eval.multilabel_curve_metrics(y_true, y_proba)    
+    # =========== SAVE MEASURES ===========   
+    metrics_df, ignored_df = eval.multilabel_curve_metrics(y_true, y_proba)    
     name = (directory + "/results-python.csv") 
-    res_curves.to_csv(name, index=False)    
+    metrics_df.to_csv(name, index=False)  
+    name = (directory + "/ignored-classes.csv") 
+    ignored_df.to_csv(name, index=False)  
+   
  
