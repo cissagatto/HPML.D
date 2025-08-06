@@ -523,7 +523,7 @@ gather.preds.rf.silho <- function(parameters) {
       if (file.exists(name.dep) == TRUE) {
         dependency = data.frame(read.csv(name.dep))
         f.dependency = rbind(f.dependency, dependency)
-        print(system(paste0("rm -r ", name.dep)))
+        system(paste0("rm -r ", name.dep))
         cat("\n")
       } else{
         dependency = data.frame(
@@ -542,7 +542,7 @@ gather.preds.rf.silho <- function(parameters) {
       if (file.exists(name.ls) == TRUE) {
         labelsets = data.frame(read.csv(name.ls))
         f.labelsets = rbind(f.labelsets, labelsets)
-        print(system(paste0("rm -r ", name.ls)))
+        system(paste0("rm -r ", name.ls))
         cat("\n")
       } else {
         labelsets =  data.frame(
@@ -560,7 +560,7 @@ gather.preds.rf.silho <- function(parameters) {
       if (file.exists(name.info) == TRUE) {
         info = data.frame(read.csv(name.info))
         f.info = rbind(f.info, info)
-        print(system(paste0("rm -r ", name.info)))
+        system(paste0("rm -r ", name.info))
         cat("\n")
       } else {
         info = data.frame(
@@ -582,7 +582,7 @@ gather.preds.rf.silho <- function(parameters) {
         properties = data.frame(read.csv(name.properties))
         properties <- properties %>% select(-fold.1, -cluster.1)
         f.properties = rbind(f.properties, properties)
-        print(system(paste0("rm -r ", name.properties)))
+        system(paste0("rm -r ", name.properties))
         cat("\n")
       } else {
         properties = data.frame(
@@ -611,7 +611,7 @@ gather.preds.rf.silho <- function(parameters) {
       if (file.exists(name.pos.neg) == TRUE) {
         pos.neg = data.frame(read.csv(name.pos.neg))
         f.pos.neg = rbind(f.pos.neg, pos.neg)
-        print(system(paste0("rm -r ", name.pos.neg)))
+        system(paste0("rm -r ", name.pos.neg))
         cat("\n")
       } else {
         pos.neg = data.frame(
@@ -635,7 +635,7 @@ gather.preds.rf.silho <- function(parameters) {
           size = model.size$model_size_bytes
         )
         f.model.size = rbind(f.model.size, model.size)
-        print(system(paste0("rm -r ", name.model.size)))
+        system(paste0("rm -r ", name.model.size))
         cat("\n")
       }
       
@@ -650,7 +650,7 @@ gather.preds.rf.silho <- function(parameters) {
         metrics = data.frame(fold = f, cluster = g, metrics)
         rownames(metrics) = NULL
         f.metrics = rbind(f.metrics, metrics)
-        print(system(paste0("rm -r ", name.metrics)))
+        system(paste0("rm -r ", name.metrics))
         cat("\n")
       }
       
@@ -661,7 +661,7 @@ gather.preds.rf.silho <- function(parameters) {
         runtime = runtime[, -1]
         runtime = data.frame(fold = f, cluster = g, runtime)
         f.runtime = rbind(f.runtime, runtime)
-        print(system(paste0("rm -r ", name.runtime)))
+        system(paste0("rm -r ", name.runtime))
         cat("\n")
       }
       
@@ -671,7 +671,7 @@ gather.preds.rf.silho <- function(parameters) {
         runtime = data.frame(read.csv(name.runtime.python))
         runtime = data.frame(fold = f, cluster = g, runtime)
         f.runtime.python = rbind(f.runtime.python, runtime)
-        print(system(paste0("rm -r ", name.runtime.python)))
+        system(paste0("rm -r ", name.runtime.python))
         cat("\n")
       }
       
@@ -907,7 +907,7 @@ evaluate.rf.silho <- function(parameters) {
       sep = ""
     )
     
-    res = print(system(str.execute))
+    res = system(str.execute)
     
     if (res != 0) {
       break

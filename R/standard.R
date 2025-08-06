@@ -334,8 +334,8 @@ if(parameters$Config$Implementation =="clus"){
   setwd(parameters$Directories$folderTested)
   write.csv(result_set, "Final-Runtime.csv")
   
-  print(system(paste("rm -r ", parameters$Directories$folderDatasets, sep="")))
-  print(system(paste("rm -r ", parameters$Directories$folderPartitions, sep="")))
+  system(paste("rm -r ", parameters$Directories$folderDatasets, sep=""))
+  system(paste("rm -r ", parameters$Directories$folderPartitions, sep=""))
   
   cat("\n#####################################################")
   cat("\n# COMPRESS RESULTS                                  #")
@@ -345,7 +345,7 @@ if(parameters$Config$Implementation =="clus"){
     parameters$DatasetInfo$Name, "-results-stand.tar.gz ",
     "-C ", parameters$Directories$folderTested, " ."
   )
-  print(system(str3))
+  system(str3)
   
   cat("\n######################################################")
   cat("\n# COPY TO HOME                                       #")
@@ -359,7 +359,7 @@ if(parameters$Config$Implementation =="clus"){
                "-results-stand.tar.gz", sep="")
   
   str4 = paste("cp ", str3, " ", str0, sep="")
-  print(system(str4))
+  system(str4)
  
   
 } else if(parameters$Config$Implementation=="mulan"){
@@ -378,7 +378,7 @@ cat("\n####################################################################")
 cat("\n# DELETE                                                           #")
 cat("\n####################################################################\n\n")
 str_c = paste("rm -r ", diretorios$folderResults, sep="")
-print(system(str_c))
+system(str_c)
 
 rm(list = ls())
 gc()
