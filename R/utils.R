@@ -488,7 +488,7 @@ infoDataSet <- function(dataset){
 converteArff <- function(arg1, arg2, arg3){
   str = paste("java -jar ", parameters$Directories$folderUtils,
               "/R_csv_2_arff.jar ", arg1, " ", arg2, " ", arg3, sep="")
-  print(system(str))
+  system(str)
   cat("\n")
 }
 
@@ -780,25 +780,25 @@ properties.clusters <- function(nomes.labels.clusters,
   write.csv(ld, name, row.names = FALSE)
   
   ##################################################################
-  name = paste(folderSave , "/contingency-tr.txt", sep="")
-  sink(name )
-  print(table(label.space.tr))
-  sink()
-  
-  name = paste(folderSave , "/contingency-ts.txt", sep="")
-  sink(name )
-  print(table(label.space.ts))
-  sink()
-  
-  name = paste(folderSave , "/contingency-vl.txt", sep="")
-  sink(name )
-  print(table(label.space.vl))
-  sink()
-  
-  name = paste(folderSave , "/contingency-tv.txt", sep="")
-  sink(name )
-  print(table(label.space.tv))
-  sink()
+  # name = paste(folderSave , "/contingency-tr.txt", sep="")
+  # sink(name )
+  # print(table(label.space.tr))
+  # sink()
+  # 
+  # name = paste(folderSave , "/contingency-ts.txt", sep="")
+  # sink(name )
+  # print(table(label.space.ts))
+  # sink()
+  # 
+  # name = paste(folderSave , "/contingency-vl.txt", sep="")
+  # sink(name )
+  # print(table(label.space.vl))
+  # sink()
+  # 
+  # name = paste(folderSave , "/contingency-tv.txt", sep="")
+  # sink(name )
+  # print(table(label.space.tv))
+  # sink()
   
 }
 
@@ -891,12 +891,12 @@ roc.curva <- function(f, y_pred, test, Folder, nome){
   
   ###############################################################
   # SALVANDO AS OUTRAS INFORMAÇÕES
-  name = paste(Folder, "/", nome, "-roc-2.txt", sep="")
-  sink(name, type = "output")
-  print(res$roc)
-  cat("\n\n")
-  str(res)
-  sink()
+  #name = paste(Folder, "/", nome, "-roc-2.txt", sep="")
+  #sink(name, type = "output")
+  #print(res$roc)
+  #cat("\n\n")
+  #str(res)
+  #sink()
 }
 
 
@@ -990,11 +990,11 @@ matrix.confusao <- function(true, pred, type, salva, nomes.rotulos){
 
 avaliacao <- function(f, y_true, y_pred, salva, nome){
   
-  salva.0 = paste(salva, "/", nome, "-conf-mat.txt", sep="")
-  sink(file=salva.0, type="output")
+  #salva.0 = paste(salva, "/", nome, "-conf-mat.txt", sep="")
+  #sink(file=salva.0, type="output")
   confmat = multilabel_confusion_matrix(y_true, y_pred)
-  print(confmat)
-  sink()
+  #print(confmat)
+  #sink()
   
   resConfMat = multilabel_evaluate(confmat)
   resConfMat = data.frame(resConfMat)
